@@ -1,0 +1,31 @@
+# Binaries
+bin/
+mm-ready
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary
+*.test
+
+# Output
+*.out
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Report output
+reports/
+*.html
+*.json
+!go.sum
