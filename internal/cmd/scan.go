@@ -47,7 +47,7 @@ func runMode(cf connFlags, of outputFlags, categories string, verbose bool, mode
 		DSN:      cf.DSN,
 	})
 	if err != nil {
-		return fmt.Errorf("connection failed: %w", err)
+		return formatConnError(err, cf)
 	}
 	defer conn.Close(ctx)
 
@@ -107,4 +107,32 @@ func splitComma(s string) []string {
 		}
 	}
 	return result
+}
+
+// formatConnError returns a user-friendly error message for connection failures.
+func formatConnError(err error, cf connFlags) error {
+	errMsg := err.Error()
+	var hint string
+
+	switch {
+	case strings.Contains(errMsg, "no password supplied") || strings.Contains(errMsg, "password authentication failed"):
+		hint = "Hint: Use --password to provide a password, or set PGPASSWORD environment variable."
+	case strings.Contains(errMsg, "does not exist"):
+		hint = "Hint: Check that the database name is correct."
+	case strings.Contains(strings.ToLower(errMsg), "connection refused") || strings.Contains(strings.ToLower(errMsg), "could not connect"):
+		host := cf.Host
+		if host == "" {
+			host = "localhost"
+		}
+		port := cf.Port
+		if port == 0 {
+			port = 5432
+		}
+		hint = fmt.Sprintf("Hint: Check that PostgreSQL is running on %s:%d.", host, port)
+	}
+
+	if hint != "" {
+		return fmt.Errorf("could not connect to database.\n       %s\n\n%s", errMsg, hint)
+	}
+	return fmt.Errorf("could not connect to database: %s", errMsg)
 }

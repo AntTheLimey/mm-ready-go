@@ -41,7 +41,7 @@ func runMonitor(cmd *cobra.Command, args []string) error {
 		DSN:      monitorConn.DSN,
 	})
 	if err != nil {
-		return err
+		return formatConnError(err, monitorConn)
 	}
 	defer conn.Close(ctx)
 
