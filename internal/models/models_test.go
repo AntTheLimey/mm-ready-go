@@ -142,8 +142,16 @@ func TestInfoCount(t *testing.T) {
 
 func TestChecksTotal(t *testing.T) {
 	r := sampleReport()
-	if r.ChecksTotal() != 7 {
-		t.Errorf("ChecksTotal = %d, want 7", r.ChecksTotal())
+	// 7 total results minus 1 skipped = 6 that actually ran
+	if r.ChecksTotal() != 6 {
+		t.Errorf("ChecksTotal = %d, want 6", r.ChecksTotal())
+	}
+}
+
+func TestChecksSkipped(t *testing.T) {
+	r := sampleReport()
+	if r.ChecksSkipped() != 1 {
+		t.Errorf("ChecksSkipped = %d, want 1", r.ChecksSkipped())
 	}
 }
 

@@ -179,7 +179,7 @@ func TestJSONSummaryCounts(t *testing.T) {
 		"warnings":     1,
 		"consider":     1,
 		"info":         1,
-		"total_checks": 7,
+		"total_checks": 6, // 7 total minus 1 skipped
 	}
 	for k, want := range checks {
 		got := s[k].(float64)

@@ -152,9 +152,26 @@ func (r *ScanReport) ChecksPassed() int {
 	return count
 }
 
-// ChecksTotal returns the total number of check results.
+// ChecksTotal returns the number of checks that actually ran (excludes skipped).
 func (r *ScanReport) ChecksTotal() int {
-	return len(r.Results)
+	count := 0
+	for _, cr := range r.Results {
+		if !cr.Skipped {
+			count++
+		}
+	}
+	return count
+}
+
+// ChecksSkipped returns the number of skipped checks.
+func (r *ScanReport) ChecksSkipped() int {
+	count := 0
+	for _, cr := range r.Results {
+		if cr.Skipped {
+			count++
+		}
+	}
+	return count
 }
 
 func (r *ScanReport) countBySeverity(sev Severity) int {
