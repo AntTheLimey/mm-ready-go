@@ -13,11 +13,15 @@ platform against any connectable PostgreSQL instance.
   ~/PROJECTS/spock/ is the authoritative reference. Spock documentation is
   frequently wrong or out of date. Always verify claims against the C source.
 
-- **Scan mode vs Audit mode.** The tool has two operational modes:
+- **Operational modes.** The tool has three main modes:
   - `scan` (default) — pre-Spock readiness assessment of a vanilla PostgreSQL
     database that does NOT have Spock installed. This is the primary use case.
   - `audit` — post-Spock health check of a database that already has Spock
     installed and running.
+  - `analyze` — offline analysis of a `pg_dump --schema-only` SQL file without
+    a database connection. Useful for Customer Success when customers send
+    schema dumps. Runs 19 of the 56 checks (those that can work from schema
+    structure alone); the remaining 37 are marked as skipped.
 
   Checks are tagged with `mode = "scan"`, `mode = "audit"`, or `mode = "both"`.
   Scan-mode checks must never assume Spock is installed. Audit-mode checks may
@@ -46,6 +50,12 @@ MM_Ready_Go/
       functions/                   # 3 check files
       sequences/                   # 2 check files
       sql_patterns/                # 5 check files
+    parser/
+      types.go                     # ParsedSchema, TableDef, ColumnDef, etc.
+      parser.go                    # ParseDump() - pg_dump SQL parser
+    analyzer/
+      analyzer.go                  # RunAnalyze() orchestrator
+      checks.go                    # 19 static check functions for offline analysis
     connection/connection.go       # Connect(Config) -> *pgx.Conn, GetPGVersion()
     scanner/scanner.go             # RunScan() orchestrator
     reporter/
@@ -60,6 +70,7 @@ MM_Ready_Go/
       root.go                      # Cobra root command with default-to-scan logic
       scan.go                      # scan subcommand
       audit.go                     # audit subcommand
+      analyze.go                   # analyze subcommand (offline schema analysis)
       monitor.go                   # monitor subcommand
       listchecks.go                # list-checks subcommand
       output.go                    # Timestamped output path generation
@@ -170,6 +181,27 @@ go test -tags integration ./tests/ -v
 - `tests/test_workload.sql` — idempotent workload that populates
   pg_stat_statements and exercises the mmr_ tables. The database is unchanged
   after each run (inserts are deleted, updates are reverted).
+
+## Offline Analysis (analyze mode)
+
+The `analyze` subcommand parses a pg_dump SQL file and runs schema-structural
+checks without a database connection:
+
+```bash
+./bin/mm-ready analyze --file customer_schema.sql --format html -v
+```
+
+The schema parser (`internal/parser/parser.go`) extracts:
+- Tables (columns, constraints, UNLOGGED, INHERITS, PARTITION BY)
+- Constraints (PK, UNIQUE, FK with CASCADE options, EXCLUDE, DEFERRABLE)
+- Indexes (unique, method, columns)
+- Sequences (data type, ownership)
+- Extensions, ENUM types, Rules
+
+The analyzer (`internal/analyzer/`) runs 19 static checks that can operate on
+parsed schema structure. Checks requiring live database access (GUCs, pg_stat,
+Spock catalogs, etc.) are marked as skipped with reason "Requires live database
+connection".
 
 ## Code Style
 

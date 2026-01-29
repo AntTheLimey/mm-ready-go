@@ -11,9 +11,10 @@ before (or after) deploying Spock.
 
 - **56 automated checks** across 7 categories — schema, replication, config,
   extensions, SQL patterns, functions, and sequences
-- **Two operational modes:**
+- **Three operational modes:**
     - `scan` — pre-Spock readiness assessment (vanilla PostgreSQL, no Spock needed)
     - `audit` — post-Spock health check (database with Spock already running)
+    - `analyze` — offline analysis of pg_dump schema files (no database connection needed)
 - **Three output formats:** HTML, Markdown, JSON
 - **Timestamped reports** — output filenames include a timestamp so previous
   scans are never overwritten
@@ -52,6 +53,12 @@ mm-ready scan \
 mm-ready audit \
   --host db.example.com --dbname myapp --user postgres --password secret \
   --format html --output audit.html
+```
+
+### Analyze (offline schema analysis)
+
+```bash
+mm-ready analyze --file customer_schema.sql --format html -v
 ```
 
 ### Monitor (observe activity over time)

@@ -11,9 +11,10 @@ before (or after) deploying Spock.
 
 - **56 automated checks** across 7 categories — schema, replication, config,
   extensions, SQL patterns, functions, and sequences
-- **Two operational modes:**
+- **Three operational modes:**
   - `scan` — pre-Spock readiness assessment (vanilla PostgreSQL, no Spock needed)
   - `audit` — post-Spock health check (database with Spock already running)
+  - `analyze` — offline analysis of pg_dump schema files (no database connection needed)
 - **Three output formats:** HTML, Markdown, JSON
 - **Timestamped reports** — output filenames include a timestamp so previous
   scans are never overwritten
@@ -75,6 +76,16 @@ mm-ready audit \
   --host db.example.com --dbname myapp --user postgres --password secret \
   --format html --output audit.html
 ```
+
+### Analyze (offline schema analysis)
+
+```bash
+# Analyze a pg_dump --schema-only file without connecting to a database
+mm-ready analyze --file customer_schema.sql --format html -v
+```
+
+Runs 19 of the 56 checks that can operate on schema structure alone. Useful for
+Customer Success teams assessing customer-provided schema dumps.
 
 ### Monitor (observe activity over time)
 
@@ -243,6 +254,12 @@ MM_Ready_Go/
     checks/sql_patterns/           # 5 SQL pattern checks
     checks/functions/              # 3 function/trigger checks
     checks/sequences/              # 2 sequence checks
+    parser/
+      types.go                     # ParsedSchema, TableDef, ColumnDef, etc.
+      parser.go                    # ParseDump() - pg_dump SQL parser
+    analyzer/
+      analyzer.go                  # RunAnalyze() orchestrator
+      checks.go                    # 19 static check functions for offline analysis
     connection/connection.go       # pgx connection, GetPGVersion()
     scanner/scanner.go             # RunScan() orchestrator
     reporter/
@@ -257,6 +274,7 @@ MM_Ready_Go/
       root.go                      # Cobra root command
       scan.go                      # scan subcommand (default)
       audit.go                     # audit subcommand
+      analyze.go                   # analyze subcommand (offline schema analysis)
       monitor.go                   # monitor subcommand
       listchecks.go                # list-checks subcommand
       output.go                    # Timestamped output path generation
