@@ -16,7 +16,11 @@ func RenderMarkdown(report *models.ScanReport) string {
 	lines = append(lines, "# MM-Ready: Spock 5 Readiness Report")
 	lines = append(lines, "")
 	lines = append(lines, fmt.Sprintf("**Database:** %s  ", report.Database))
-	lines = append(lines, fmt.Sprintf("**Host:** %s:%d  ", report.Host, report.Port))
+	if report.ScanMode == "analyze" {
+		lines = append(lines, fmt.Sprintf("**Source File:** %s  ", report.Host))
+	} else {
+		lines = append(lines, fmt.Sprintf("**Host:** %s:%d  ", report.Host, report.Port))
+	}
 	lines = append(lines, fmt.Sprintf("**PostgreSQL:** %s  ", report.PGVersion))
 	lines = append(lines, fmt.Sprintf("**Scan Time:** %s  ", report.Timestamp.Format("2006-01-02 15:04:05 UTC")))
 	lines = append(lines, fmt.Sprintf("**Target:** Spock %s", report.SpockTarget))

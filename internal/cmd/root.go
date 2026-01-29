@@ -27,6 +27,7 @@ func init() {
 	rootCmd.AddCommand(auditCmd)
 	rootCmd.AddCommand(monitorCmd)
 	rootCmd.AddCommand(listChecksCmd)
+	rootCmd.AddCommand(analyzeCmd)
 }
 
 // Execute runs the root command. Called from main().
@@ -36,7 +37,7 @@ func Execute() error {
 		firstArg := os.Args[1]
 		knownCommands := map[string]bool{
 			"scan": true, "audit": true, "monitor": true, "list-checks": true,
-			"help": true, "completion": true,
+			"analyze": true, "help": true, "completion": true,
 		}
 		if !knownCommands[firstArg] && firstArg != "--version" && firstArg != "--help" && firstArg != "-h" && firstArg != "-v" {
 			// Prepend "scan" to args

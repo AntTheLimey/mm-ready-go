@@ -413,7 +413,11 @@ func RenderHTML(report *models.ScanReport) string {
 	main = append(main, `<div class="main">`)
 	main = append(main, `<h1>MM-Ready: Spock 5 Readiness Report</h1>`)
 	main = append(main, fmt.Sprintf(`<p><strong>Database:</strong> %s<br>`, esc(report.Database)))
-	main = append(main, fmt.Sprintf(`<strong>Host:</strong> %s:%d<br>`, esc(report.Host), report.Port))
+	if report.ScanMode == "analyze" {
+		main = append(main, fmt.Sprintf(`<strong>Source File:</strong> %s<br>`, esc(report.Host)))
+	} else {
+		main = append(main, fmt.Sprintf(`<strong>Host:</strong> %s:%d<br>`, esc(report.Host), report.Port))
+	}
 	main = append(main, fmt.Sprintf(`<strong>PostgreSQL:</strong> %s<br>`, esc(report.PGVersion)))
 	main = append(main, fmt.Sprintf(`<strong>Scan Time:</strong> %s<br>`, report.Timestamp.Format("2006-01-02 15:04:05 UTC")))
 	main = append(main, fmt.Sprintf(`<strong>Mode:</strong> %s<br>`, esc(report.ScanMode)))
