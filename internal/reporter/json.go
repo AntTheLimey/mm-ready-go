@@ -3,7 +3,7 @@ package reporter
 import (
 	"encoding/json"
 
-	"github.com/AntTheLimey/mm-ready/internal/models"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 type jsonReport struct {
@@ -56,7 +56,7 @@ type jsonFinding struct {
 func RenderJSON(report *models.ScanReport) string {
 	data := jsonReport{
 		Meta: jsonMeta{
-			Tool:        "mm-ready",
+			Tool:        "mm-ready-go",
 			Version:     "0.1.0",
 			Timestamp:   report.Timestamp.Format("2006-01-02T15:04:05-07:00"),
 			Database:    report.Database,

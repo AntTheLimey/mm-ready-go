@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"os"
 
-	_ "github.com/AntTheLimey/mm-ready/internal/checks"
-	"github.com/AntTheLimey/mm-ready/internal/cmd"
+	_ "github.com/pgEdge/mm-ready-go/internal/checks"
+	"github.com/pgEdge/mm-ready-go/internal/cmd"
 )
 
 func main() {

@@ -5,8 +5,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 	"github.com/jackc/pgx/v5"
 )
 

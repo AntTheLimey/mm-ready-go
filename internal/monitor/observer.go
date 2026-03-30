@@ -7,9 +7,9 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/connection"
-	"github.com/AntTheLimey/mm-ready/internal/models"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/connection"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -41,7 +41,7 @@ func RunMonitor(ctx context.Context, conn *pgx.Conn, opts Options) (*models.Scan
 	}
 
 	// Phase 1: standard checks (scan-mode only)
-	checks := check.GetChecks("scan", nil)
+	checks := check.GetChecks("scan", nil, nil, nil)
 	total := len(checks)
 	if opts.Verbose {
 		fmt.Fprintf(os.Stderr, "Phase 1: Running %d standard checks...\n", total)

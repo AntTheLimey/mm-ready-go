@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/AntTheLimey/mm-ready/internal/models"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // -- Test helpers -------------------------------------------------------------
@@ -284,7 +284,7 @@ func TestMarkdownContainsFindingTitles(t *testing.T) {
 // -- HTML Reporter ------------------------------------------------------------
 
 func TestHTMLValidStructure(t *testing.T) {
-	output := RenderHTML(sampleReport())
+	output := RenderHTML(sampleReport(), DefaultReportOptions())
 	lower := strings.ToLower(output)
 	if !strings.Contains(lower, "<!doctype html>") {
 		t.Error("HTML should contain DOCTYPE")
@@ -295,7 +295,7 @@ func TestHTMLValidStructure(t *testing.T) {
 }
 
 func TestHTMLContainsSeverityBadges(t *testing.T) {
-	output := RenderHTML(sampleReport())
+	output := RenderHTML(sampleReport(), DefaultReportOptions())
 	for _, badge := range []string{"badge-critical", "badge-warning", "badge-consider", "badge-info"} {
 		if !strings.Contains(output, badge) {
 			t.Errorf("HTML should contain %s", badge)
@@ -304,7 +304,7 @@ func TestHTMLContainsSeverityBadges(t *testing.T) {
 }
 
 func TestHTMLContainsFindingContent(t *testing.T) {
-	output := RenderHTML(sampleReport())
+	output := RenderHTML(sampleReport(), DefaultReportOptions())
 	// Go's html.EscapeString turns ' into &#39;
 	if !strings.Contains(output, "wal_level is not &#39;logical&#39;") && !strings.Contains(output, "wal_level is not 'logical'") {
 		t.Error("HTML should contain wal_level finding title")
@@ -312,7 +312,7 @@ func TestHTMLContainsFindingContent(t *testing.T) {
 }
 
 func TestHTMLTodoSectionPresent(t *testing.T) {
-	output := RenderHTML(sampleReport())
+	output := RenderHTML(sampleReport(), DefaultReportOptions())
 	if !strings.Contains(output, "To Do") {
 		t.Error("HTML should contain To Do section")
 	}
@@ -322,7 +322,7 @@ func TestHTMLTodoSectionPresent(t *testing.T) {
 }
 
 func TestHTMLSidebarPresent(t *testing.T) {
-	output := RenderHTML(sampleReport())
+	output := RenderHTML(sampleReport(), DefaultReportOptions())
 	if !strings.Contains(output, "sidebar") {
 		t.Error("HTML should contain sidebar")
 	}
@@ -387,7 +387,7 @@ func TestVerdictReadyWithOnlyConsiderAndInfo(t *testing.T) {
 
 func TestVerdictInHTMLToo(t *testing.T) {
 	r := makeReportWithSeverities(models.SeverityCritical, models.SeverityWarning)
-	h := RenderHTML(r)
+	h := RenderHTML(r, DefaultReportOptions())
 	if !strings.Contains(h, "NOT READY") {
 		t.Error("HTML should contain NOT READY")
 	}

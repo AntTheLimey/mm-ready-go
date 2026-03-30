@@ -7,8 +7,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/AntTheLimey/mm-ready/internal/models"
-	"github.com/AntTheLimey/mm-ready/internal/parser"
+	"github.com/pgEdge/mm-ready-go/internal/models"
+	"github.com/pgEdge/mm-ready-go/internal/parser"
 )
 
 // Extension known issues map
@@ -150,6 +150,10 @@ func checkSequencePKs(schema *parser.ParsedSchema, checkName, category string) [
 				isSequenceBacked = true
 				seqName = fmt.Sprintf("%s_%s_seq (identity)", tbl.TableName, colName)
 			} else if col.DefaultExpr != "" && strings.Contains(strings.ToLower(col.DefaultExpr), "nextval(") {
+				// Skip snowflake sequences — already globally unique
+				if strings.Contains(strings.ToLower(col.DefaultExpr), "snowflake") {
+					continue
+				}
 				isSequenceBacked = true
 				if m := reNextval.FindStringSubmatch(col.DefaultExpr); m != nil {
 					seqName = m[1]

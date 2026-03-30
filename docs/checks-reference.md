@@ -1,6 +1,6 @@
 # Checks Reference
 
-Complete reference for all mm-ready checks. Each check implements the
+Complete reference for all 57 mm-ready-go checks. Each check implements the
 `check.Check` interface and is registered via `init()` in its source file.
 
 Checks are organized by category. Within each category, the mode column
@@ -681,7 +681,7 @@ SELECT pg_reload_conf();
 
 ---
 
-## Extensions (4 checks)
+## Extensions (5 checks)
 
 ### installed_extensions
 
@@ -741,6 +741,30 @@ CREATE EXTENSION IF NOT EXISTS pg_stat_statements;
 ```sql
 CREATE EXTENSION lolor;
 ALTER SYSTEM SET lolor.node = <unique_id>;
+```
+
+---
+
+### extension_versions
+
+| | |
+|---|---|
+| **File** | `internal/checks/extensions/extension_versions.go` |
+| **Mode** | scan |
+| **Severity** | CONSIDER |
+| **Description** | Installed extension versions compared against available upgrades |
+
+Queries `pg_extension` joined with `pg_available_extensions` to find
+extensions where the installed version differs from the default available
+version.
+
+In a multi-master cluster all nodes must run identical extension versions.
+Extensions with pending upgrades should be updated before Spock setup to
+ensure version consistency.
+
+**Remediation:**
+```sql
+ALTER EXTENSION extension_name UPDATE TO 'new_version';
 ```
 
 ---

@@ -3,19 +3,19 @@ package checks_test
 import (
 	"testing"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	_ "github.com/AntTheLimey/mm-ready/internal/checks" // triggers all init() registrations
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	_ "github.com/pgEdge/mm-ready-go/internal/checks" // triggers all init() registrations
 )
 
 func TestTotalCheckCount(t *testing.T) {
 	all := check.AllRegistered()
-	if len(all) != 56 {
+	if len(all) != 57 {
 		// List what we have for debugging
 		cats := make(map[string]int)
 		for _, c := range all {
 			cats[c.Category()]++
 		}
-		t.Errorf("expected 56 checks, got %d. By category: %v", len(all), cats)
+		t.Errorf("expected 57 checks, got %d. By category: %v", len(all), cats)
 	}
 }
 
@@ -56,7 +56,7 @@ func TestCategoryCounts(t *testing.T) {
 		"config":       8,
 		"replication":  12,
 		"schema":       22,
-		"extensions":   4,
+		"extensions":   5,
 		"functions":    3,
 		"sequences":    2,
 		"sql_patterns": 5,
@@ -73,7 +73,7 @@ func TestCategoryCounts(t *testing.T) {
 }
 
 func TestGetChecksScanMode(t *testing.T) {
-	checks := check.GetChecks("scan", nil)
+	checks := check.GetChecks("scan", nil, nil, nil)
 	for _, c := range checks {
 		if c.Mode() != "scan" && c.Mode() != "both" {
 			t.Errorf("scan mode returned check %s with mode %q", c.Name(), c.Mode())
@@ -85,7 +85,7 @@ func TestGetChecksScanMode(t *testing.T) {
 }
 
 func TestGetChecksAuditMode(t *testing.T) {
-	checks := check.GetChecks("audit", nil)
+	checks := check.GetChecks("audit", nil, nil, nil)
 	for _, c := range checks {
 		if c.Mode() != "audit" && c.Mode() != "both" {
 			t.Errorf("audit mode returned check %s with mode %q", c.Name(), c.Mode())
@@ -97,7 +97,7 @@ func TestGetChecksAuditMode(t *testing.T) {
 }
 
 func TestGetChecksCategoryFilter(t *testing.T) {
-	checks := check.GetChecks("", []string{"schema"})
+	checks := check.GetChecks("", []string{"schema"}, nil, nil)
 	for _, c := range checks {
 		if c.Category() != "schema" {
 			t.Errorf("category filter returned check %s with category %q", c.Name(), c.Category())
@@ -109,7 +109,7 @@ func TestGetChecksCategoryFilter(t *testing.T) {
 }
 
 func TestGetChecksSorted(t *testing.T) {
-	checks := check.GetChecks("", nil)
+	checks := check.GetChecks("", nil, nil, nil)
 	for i := 1; i < len(checks); i++ {
 		prev := checks[i-1]
 		curr := checks[i]
@@ -125,14 +125,14 @@ func TestGetChecksSorted(t *testing.T) {
 }
 
 func TestGetChecksEmptyModeReturnsAll(t *testing.T) {
-	all := check.GetChecks("", nil)
-	if len(all) != 56 {
-		t.Errorf("empty mode should return all 56 checks, got %d", len(all))
+	all := check.GetChecks("", nil, nil, nil)
+	if len(all) != 57 {
+		t.Errorf("empty mode should return all 57 checks, got %d", len(all))
 	}
 }
 
 func TestGetChecksMultipleCategories(t *testing.T) {
-	checks := check.GetChecks("", []string{"config", "replication"})
+	checks := check.GetChecks("", []string{"config", "replication"}, nil, nil)
 	for _, c := range checks {
 		if c.Category() != "config" && c.Category() != "replication" {
 			t.Errorf("multi-category filter returned check %s with category %q", c.Name(), c.Category())
@@ -144,15 +144,15 @@ func TestGetChecksMultipleCategories(t *testing.T) {
 }
 
 func TestGetChecksNonexistentCategory(t *testing.T) {
-	checks := check.GetChecks("", []string{"nonexistent"})
+	checks := check.GetChecks("", []string{"nonexistent"}, nil, nil)
 	if len(checks) != 0 {
 		t.Errorf("expected 0 checks for nonexistent category, got %d", len(checks))
 	}
 }
 
 func TestScanAndAuditCountsAddUp(t *testing.T) {
-	scan := check.GetChecks("scan", nil)
-	audit := check.GetChecks("audit", nil)
+	scan := check.GetChecks("scan", nil, nil, nil)
+	audit := check.GetChecks("audit", nil, nil, nil)
 
 	// Count "both" mode checks
 	bothCount := 0
@@ -163,8 +163,35 @@ func TestScanAndAuditCountsAddUp(t *testing.T) {
 	}
 
 	total := len(scan) + len(audit) - bothCount
-	if total != 56 {
-		t.Errorf("scan(%d) + audit(%d) - both(%d) = %d, want 56",
+	if total != 57 {
+		t.Errorf("scan(%d) + audit(%d) - both(%d) = %d, want 57",
 			len(scan), len(audit), bothCount, total)
+	}
+}
+
+func TestGetChecksExclude(t *testing.T) {
+	all := check.GetChecks("", nil, nil, nil)
+	excluded := check.GetChecks("", nil, []string{"primary_keys", "wal_level"}, nil)
+	if len(excluded) != len(all)-2 {
+		t.Errorf("expected %d checks after excluding 2, got %d", len(all)-2, len(excluded))
+	}
+	for _, c := range excluded {
+		if c.Name() == "primary_keys" || c.Name() == "wal_level" {
+			t.Errorf("excluded check %s still present", c.Name())
+		}
+	}
+}
+
+func TestGetChecksIncludeOnly(t *testing.T) {
+	included := check.GetChecks("", nil, nil, []string{"primary_keys", "wal_level"})
+	if len(included) != 2 {
+		t.Errorf("expected 2 checks with include-only, got %d", len(included))
+	}
+}
+
+func TestGetChecksIncludeOnlyTakesPrecedence(t *testing.T) {
+	result := check.GetChecks("", nil, []string{"primary_keys"}, []string{"primary_keys"})
+	if len(result) != 1 {
+		t.Errorf("include-only should take precedence, expected 1 check, got %d", len(result))
 	}
 }

@@ -4,7 +4,7 @@ package check
 import (
 	"context"
 
-	"github.com/AntTheLimey/mm-ready/internal/models"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 	"github.com/jackc/pgx/v5"
 )
 

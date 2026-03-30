@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -20,7 +20,7 @@ func init() {
 
 func (ViewsAuditCheck) Name() string        { return "views_audit" }
 func (ViewsAuditCheck) Category() string     { return "functions" }
-func (ViewsAuditCheck) Mode() string         { return "scan" }
+func (ViewsAuditCheck) Mode() string         { return "both" }
 func (ViewsAuditCheck) Description() string {
 	return "Audit views — updatable views and materialized views have replication considerations"
 }

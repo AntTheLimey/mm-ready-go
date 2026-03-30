@@ -1,0 +1,14 @@
+language: go
+reviews:
+  auto_review:
+    enabled: true
+    incremental: true
+  tools:
+    golangci-lint:
+      enabled: true
+    gitleaks:
+      enabled: true
+    yamllint:
+      enabled: true
+    markdownlint:
+      enabled: true

@@ -6,15 +6,18 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/AntTheLimey/mm-ready/internal/analyzer"
-	"github.com/AntTheLimey/mm-ready/internal/parser"
-	"github.com/AntTheLimey/mm-ready/internal/reporter"
+	"github.com/pgEdge/mm-ready-go/internal/analyzer"
+	"github.com/pgEdge/mm-ready-go/internal/config"
+	"github.com/pgEdge/mm-ready-go/internal/parser"
+	"github.com/pgEdge/mm-ready-go/internal/reporter"
 	"github.com/spf13/cobra"
 )
 
 var analyzeFile string
 var analyzeOut outputFlags
 var analyzeCategories string
+var analyzeExclude string
+var analyzeIncludeOnly string
 var analyzeVerbose bool
 
 var analyzeCmd = &cobra.Command{
@@ -28,7 +31,11 @@ func init() {
 	analyzeCmd.Flags().StringVar(&analyzeFile, "file", "", "Path to pg_dump SQL file (required)")
 	analyzeCmd.MarkFlagRequired("file")
 	addOutputFlags(analyzeCmd, &analyzeOut)
+	addConfigFlags(analyzeCmd)
+	addReportFlags(analyzeCmd)
 	analyzeCmd.Flags().StringVar(&analyzeCategories, "categories", "", "Comma-separated list of check categories to run")
+	analyzeCmd.Flags().StringVar(&analyzeExclude, "exclude", "", "Comma-separated list of check names to skip")
+	analyzeCmd.Flags().StringVar(&analyzeIncludeOnly, "include-only", "", "Comma-separated list of check names to run (whitelist)")
 	analyzeCmd.Flags().BoolVarP(&analyzeVerbose, "verbose", "v", false, "Print progress")
 }
 
@@ -37,6 +44,36 @@ func runAnalyze(cmd *cobra.Command, args []string) error {
 	if _, err := os.Stat(analyzeFile); os.IsNotExist(err) {
 		return fmt.Errorf("file not found: %s", analyzeFile)
 	}
+
+	// Load config
+	var cfg config.Config
+	if !noConfig {
+		if configPath != "" {
+			var cfgErr error
+			cfg, cfgErr = config.LoadFile(configPath)
+			if cfgErr != nil {
+				return cfgErr
+			}
+		} else {
+			path := config.DiscoverConfigFile()
+			if path != "" {
+				var cfgErr error
+				cfg, cfgErr = config.LoadFile(path)
+				if cfgErr != nil {
+					return cfgErr
+				}
+				if analyzeVerbose {
+					fmt.Fprintf(os.Stderr, "Using config file: %s\n", path)
+				}
+			} else {
+				cfg = config.Default()
+			}
+		}
+	} else {
+		cfg = config.Default()
+	}
+
+	checkCfg, reportCfg := config.MergeCLI(cfg, "analyze", splitComma(analyzeExclude), splitComma(analyzeIncludeOnly), noTodo, todoIncludeConsider)
 
 	// Parse the dump file
 	schema, err := parser.ParseDump(analyzeFile)
@@ -56,13 +93,17 @@ func runAnalyze(cmd *cobra.Command, args []string) error {
 	}
 
 	// Run analysis
-	report, err := analyzer.RunAnalyze(schema, analyzeFile, cats, analyzeVerbose)
+	report, err := analyzer.RunAnalyze(schema, analyzeFile, cats, checkCfg.Exclude, checkCfg.IncludeOnly, analyzeVerbose)
 	if err != nil {
 		return fmt.Errorf("analyze: %w", err)
 	}
 
 	// Render report
-	output, err := reporter.Render(report, analyzeOut.Format)
+	reportOpts := reporter.ReportOptions{
+		TodoList:            reportCfg.TodoList,
+		TodoIncludeConsider: reportCfg.TodoIncludeConsider,
+	}
+	output, err := reporter.Render(report, analyzeOut.Format, reportOpts)
 	if err != nil {
 		return fmt.Errorf("render report: %w", err)
 	}

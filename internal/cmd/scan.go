@@ -7,15 +7,18 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/AntTheLimey/mm-ready/internal/connection"
-	"github.com/AntTheLimey/mm-ready/internal/reporter"
-	"github.com/AntTheLimey/mm-ready/internal/scanner"
+	"github.com/pgEdge/mm-ready-go/internal/config"
+	"github.com/pgEdge/mm-ready-go/internal/connection"
+	"github.com/pgEdge/mm-ready-go/internal/reporter"
+	"github.com/pgEdge/mm-ready-go/internal/scanner"
 	"github.com/spf13/cobra"
 )
 
 var scanConn connFlags
 var scanOut outputFlags
 var scanCategories string
+var scanExclude string
+var scanIncludeOnly string
 var scanVerbose bool
 
 var scanCmd = &cobra.Command{
@@ -27,24 +30,62 @@ var scanCmd = &cobra.Command{
 func init() {
 	addConnFlags(scanCmd, &scanConn)
 	addOutputFlags(scanCmd, &scanOut)
+	addConfigFlags(scanCmd)
+	addReportFlags(scanCmd)
 	scanCmd.Flags().StringVar(&scanCategories, "categories", "", "Comma-separated list of check categories to run")
+	scanCmd.Flags().StringVar(&scanExclude, "exclude", "", "Comma-separated list of check names to skip")
+	scanCmd.Flags().StringVar(&scanIncludeOnly, "include-only", "", "Comma-separated list of check names to run (whitelist)")
 	scanCmd.Flags().BoolVarP(&scanVerbose, "verbose", "v", false, "Print progress")
 }
 
 func runScan(cmd *cobra.Command, args []string) error {
-	return runMode(scanConn, scanOut, scanCategories, scanVerbose, "scan")
+	return runMode(scanConn, scanOut, scanCategories, scanExclude, scanIncludeOnly, scanVerbose, "scan")
 }
 
-func runMode(cf connFlags, of outputFlags, categories string, verbose bool, mode string) error {
+func runMode(cf connFlags, of outputFlags, categories string, exclude string, includeOnly string, verbose bool, mode string) error {
 	ctx := context.Background()
 
+	// Load config
+	var cfg config.Config
+	if !noConfig {
+		if configPath != "" {
+			var cfgErr error
+			cfg, cfgErr = config.LoadFile(configPath)
+			if cfgErr != nil {
+				return cfgErr
+			}
+		} else {
+			path := config.DiscoverConfigFile()
+			if path != "" {
+				var cfgErr error
+				cfg, cfgErr = config.LoadFile(path)
+				if cfgErr != nil {
+					return cfgErr
+				}
+				if verbose {
+					fmt.Fprintf(os.Stderr, "Using config file: %s\n", path)
+				}
+			} else {
+				cfg = config.Default()
+			}
+		}
+	} else {
+		cfg = config.Default()
+	}
+
+	checkCfg, reportCfg := config.MergeCLI(cfg, mode, splitComma(exclude), splitComma(includeOnly), noTodo, todoIncludeConsider)
+
 	conn, err := connection.Connect(ctx, connection.Config{
-		Host:     cf.Host,
-		Port:     cf.Port,
-		DBName:   cf.DBName,
-		User:     cf.User,
-		Password: cf.Password,
-		DSN:      cf.DSN,
+		Host:        cf.Host,
+		Port:        cf.Port,
+		DBName:      cf.DBName,
+		User:        cf.User,
+		Password:    cf.Password,
+		DSN:         cf.DSN,
+		SSLMode:     cf.SSLMode,
+		SSLCert:     cf.SSLCert,
+		SSLKey:      cf.SSLKey,
+		SSLRootCert: cf.SSLRootCert,
 	})
 	if err != nil {
 		return formatConnError(err, cf)
@@ -57,18 +98,24 @@ func runMode(cf connFlags, of outputFlags, categories string, verbose bool, mode
 	}
 
 	report, err := scanner.RunScan(ctx, conn, scanner.Options{
-		Host:       cf.Host,
-		Port:       cf.Port,
-		DBName:     cf.DBName,
-		Categories: cats,
-		Mode:       mode,
-		Verbose:    verbose,
+		Host:        cf.Host,
+		Port:        cf.Port,
+		DBName:      cf.DBName,
+		Categories:  cats,
+		Exclude:     checkCfg.Exclude,
+		IncludeOnly: checkCfg.IncludeOnly,
+		Mode:        mode,
+		Verbose:     verbose,
 	})
 	if err != nil {
 		return err
 	}
 
-	output, err := reporter.Render(report, of.Format)
+	reportOpts := reporter.ReportOptions{
+		TodoList:            reportCfg.TodoList,
+		TodoIncludeConsider: reportCfg.TodoIncludeConsider,
+	}
+	output, err := reporter.Render(report, of.Format, reportOpts)
 	if err != nil {
 		return err
 	}

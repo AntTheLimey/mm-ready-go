@@ -7,8 +7,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/AntTheLimey/mm-ready/internal/models"
-	"github.com/AntTheLimey/mm-ready/internal/parser"
+	"github.com/pgEdge/mm-ready-go/internal/models"
+	"github.com/pgEdge/mm-ready-go/internal/parser"
 )
 
 // CheckDef defines a static analysis check.
@@ -97,13 +97,28 @@ var SkippedChecks = []SkippedCheckDef{
 }
 
 // RunAnalyze runs all static checks against a parsed schema dump.
-func RunAnalyze(schema *parser.ParsedSchema, filePath string, categories []string, verbose bool) (*models.ScanReport, error) {
+func RunAnalyze(schema *parser.ParsedSchema, filePath string, categories []string, exclude []string, includeOnly []string, verbose bool) (*models.ScanReport, error) {
 	// Build category filter set
 	var catFilter map[string]bool
 	if len(categories) > 0 {
 		catFilter = make(map[string]bool)
 		for _, c := range categories {
 			catFilter[c] = true
+		}
+	}
+
+	var exclSet map[string]bool
+	if len(exclude) > 0 {
+		exclSet = make(map[string]bool)
+		for _, e := range exclude {
+			exclSet[e] = true
+		}
+	}
+	var inclSet map[string]bool
+	if len(includeOnly) > 0 {
+		inclSet = make(map[string]bool)
+		for _, i := range includeOnly {
+			inclSet[i] = true
 		}
 	}
 
@@ -128,12 +143,19 @@ func RunAnalyze(schema *parser.ParsedSchema, filePath string, categories []strin
 		report.PGVersion = "unknown"
 	}
 
-	// Filter checks by category
+	// Filter checks by category, exclude, and include-only
 	var checksToRun []CheckDef
-	for _, check := range StaticChecks {
-		if catFilter == nil || catFilter[check.Category] {
-			checksToRun = append(checksToRun, check)
+	for _, chk := range StaticChecks {
+		if catFilter != nil && !catFilter[chk.Category] {
+			continue
 		}
+		if len(inclSet) > 0 && !inclSet[chk.Name] {
+			continue
+		}
+		if exclSet != nil && exclSet[chk.Name] {
+			continue
+		}
+		checksToRun = append(checksToRun, chk)
 	}
 
 	total := len(checksToRun)
@@ -172,6 +194,12 @@ func RunAnalyze(schema *parser.ParsedSchema, filePath string, categories []strin
 	// Add skipped checks
 	for _, skip := range SkippedChecks {
 		if catFilter != nil && !catFilter[skip.Category] {
+			continue
+		}
+		if len(inclSet) > 0 && !inclSet[skip.Name] {
+			continue
+		}
+		if exclSet != nil && exclSet[skip.Name] {
 			continue
 		}
 		report.Results = append(report.Results, models.CheckResult{

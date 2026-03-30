@@ -1,12 +1,12 @@
 # Architecture
 
-This document describes the internal architecture of mm-ready, a PostgreSQL
+This document describes the internal architecture of mm-ready-go, a PostgreSQL
 readiness scanner for pgEdge Spock 5 multi-master replication.
 
 ## Module Overview
 
 ```
-MM_Ready_Go/
+mm-ready-go/
   main.go                              # Entry point, imports checks/register.go
   internal/
     models/models.go                    # Severity (iota), Finding, CheckResult, ScanReport
@@ -18,12 +18,21 @@ MM_Ready_Go/
       schema/                           # 22 schema check files
       replication/                      # 12 replication check files
       config/                           # 8 configuration check files
-      extensions/                       # 4 extension check files
+      extensions/                       # 5 extension check files
       sql_patterns/                     # 5 SQL pattern check files
       functions/                        # 3 function/trigger check files
       sequences/                        # 2 sequence check files
+    config/
+      config.go                         # YAML configuration file loading
+      config_test.go                    # Configuration tests
     connection/connection.go            # pgx connection factory, GetPGVersion()
     scanner/scanner.go                  # RunScan() orchestrator
+    parser/
+      types.go                          # ParsedSchema, TableDef, ColumnDef, etc.
+      parser.go                         # ParseDump() - pg_dump SQL parser
+    analyzer/
+      analyzer.go                       # RunAnalyze() orchestrator
+      checks.go                         # 19 static check functions for offline analysis
     reporter/
       json.go                           # Machine-readable JSON output
       markdown.go                       # Human-readable Markdown output
@@ -36,6 +45,7 @@ MM_Ready_Go/
       root.go                           # Cobra root command with default-to-scan
       scan.go                           # scan subcommand
       audit.go                          # audit subcommand
+      analyze.go                        # analyze subcommand (offline schema analysis)
       monitor.go                        # monitor subcommand
       listchecks.go                     # list-checks subcommand
       output.go                         # Timestamped output path generation
@@ -53,6 +63,7 @@ User invokes CLI
        |
        +-- scan / audit
        |     |
+       |     +-- config.Load() --> Config (check filtering, report options)
        |     +-- connection.Connect() --> *pgx.Conn (read-only)
        |     +-- scanner.RunScan()
        |     |     +-- check.GetChecks(mode, categories)
@@ -60,6 +71,13 @@ User invokes CLI
        |     |     +-- aggregate into ScanReport
        |     +-- reporter.Render(report, format) --> string
        |     +-- writeOutput() --> file (timestamped) or stdout
+       |
+       +-- analyze
+       |     |
+       |     +-- parser.ParseDump(file) --> ParsedSchema
+       |     +-- analyzer.RunAnalyze(schema) --> ScanReport
+       |     +-- reporter.Render(report, format) --> string
+       |     +-- writeOutput()
        |
        +-- monitor
              +-- connection.Connect()
@@ -84,10 +102,21 @@ default to the `scan` subcommand when no subcommand is specified.
 
 Responsibilities:
 - Connection flags: `--dsn` or `--host/--port/--dbname/--user/--password`
+- SSL flags: `--sslmode/--sslcert/--sslkey/--sslrootcert`
 - Output flags: `--format` (json/markdown/html), `--output` (file path)
+- Configuration: `--config` (path to YAML config file)
 - Route subcommands to handler functions
 - Generate timestamped output filenames (`report.html` becomes
   `report_20260127_131504.html`)
+
+### internal/config
+
+YAML configuration file loading for check filtering and report customization.
+
+`Load(path)`:
+- Reads `.mm-ready.yml` from the specified path or current directory
+- Returns a `Config` struct with check include/exclude lists and report options
+- Supports global check filtering and mode-specific overrides
 
 ### internal/scanner
 
@@ -129,10 +158,29 @@ Database connection factory using `pgx/v5`.
 `Connect(cfg Config)`:
 - Accepts either a DSN string or individual connection parameters
 - Falls back to standard PG environment variables (PGHOST, PGUSER, etc.)
+- Supports SSL/TLS configuration (sslmode, client certs, CA)
 - Configures the connection with `default_transaction_read_only = on`
 - Returns a `*pgx.Conn`
 
 `GetPGVersion(ctx, conn)`: Returns the PostgreSQL version string.
+
+### internal/parser
+
+Schema parser for pg_dump SQL files.
+
+`ParseDump(file)`:
+- Reads a `pg_dump --schema-only` SQL file
+- Extracts tables, columns, constraints, indexes, sequences, extensions, ENUMs, rules
+- Returns a `ParsedSchema` struct used by the analyzer
+
+### internal/analyzer
+
+Offline analysis engine for parsed schema files.
+
+`RunAnalyze(schema)`:
+- Runs 19 static checks against the parsed schema structure
+- Checks requiring live database access are marked as skipped
+- Returns a `ScanReport` compatible with the standard reporters
 
 ### internal/models
 
@@ -204,7 +252,7 @@ Produces a standalone HTML document with embedded CSS and JavaScript:
 
 Three-phase monitoring orchestrator:
 
-1. **Phase 1**: Run all standard scan-mode checks (same as `mm-ready scan`)
+1. **Phase 1**: Run all standard scan-mode checks (same as `mm-ready-go scan`)
 2. **Phase 2**: If `pg_stat_statements` is available, collect snapshots before
    and after the observation window, then compute deltas to identify new or
    changed queries
@@ -260,3 +308,6 @@ PostgreSQL log file parser with pattern classification:
 
 8. **context.Context** — All database operations accept `ctx` for cancellation
    support (standard Go practice).
+
+9. **Configuration file** — YAML-based configuration for check filtering and
+   report customization, keeping CLI invocations clean.
