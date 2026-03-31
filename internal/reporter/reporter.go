@@ -9,7 +9,9 @@ import (
 
 // ReportOptions controls report rendering behavior.
 type ReportOptions struct {
-	TodoList            bool
+	// TodoList controls whether the To Do list is included.
+	TodoList bool
+	// TodoIncludeConsider includes CONSIDER items in the To Do list.
 	TodoIncludeConsider bool
 }
 

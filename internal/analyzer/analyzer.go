@@ -13,16 +13,23 @@ import (
 
 // CheckDef defines a static analysis check.
 type CheckDef struct {
-	Name        string
-	Category    string
+	// Name is the name value.
+	Name string
+	// Category is the check category.
+	Category string
+	// Description is a human-readable summary.
 	Description string
-	Fn          CheckFunc
+	// Fn is the check function to execute.
+	Fn CheckFunc
 }
 
 // SkippedCheckDef defines a check that requires a live database connection.
 type SkippedCheckDef struct {
-	Name        string
-	Category    string
+	// Name is the name value.
+	Name string
+	// Category is the check category.
+	Category string
+	// Description is a human-readable summary.
 	Description string
 }
 

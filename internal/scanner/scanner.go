@@ -15,14 +15,22 @@ import (
 
 // Options configures a scan run.
 type Options struct {
-	Host        string
-	Port        int
-	DBName      string
-	Categories  []string
-	Exclude     []string
+	// Host is the database server hostname.
+	Host string
+	// Port is the database server port.
+	Port int
+	// DBName is the database name.
+	DBName string
+	// Categories filters checks by category.
+	Categories []string
+	// Exclude lists check names to skip.
+	Exclude []string
+	// IncludeOnly lists check names to run exclusively.
 	IncludeOnly []string
-	Mode        string
-	Verbose     bool
+	// Mode is the check mode (scan, audit, both).
+	Mode string
+	// Verbose enables detailed progress output.
+	Verbose bool
 }
 
 // RunScan executes all discovered checks against the database and returns a ScanReport.

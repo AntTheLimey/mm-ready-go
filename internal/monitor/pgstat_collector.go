@@ -13,26 +13,38 @@ import (
 
 // StatementSnapshot holds a point-in-time snapshot of a single statement's stats.
 type StatementSnapshot struct {
-	Query         string
-	Calls         int64
+	// Query is the SQL query text.
+	Query string
+	// Calls is the number of times the query was executed.
+	Calls int64
+	// TotalExecTime is the cumulative execution time in milliseconds.
 	TotalExecTime float64
-	Rows          int64
-	QueryID       *int64
+	// Rows is the total number of rows returned.
+	Rows int64
+	// QueryID is the pg_stat_statements query identifier.
+	QueryID *int64
 }
 
 // ChangedQuery represents a query that had increased activity between snapshots.
 type ChangedQuery struct {
-	Query      string
+	// Query is the SQL query text.
+	Query string
+	// DeltaCalls is the change in call count during observation.
 	DeltaCalls int64
-	DeltaTime  float64
-	DeltaRows  int64
+	// DeltaTime is the change in execution time during observation.
+	DeltaTime float64
+	// DeltaRows is the change in row count during observation.
+	DeltaRows int64
 }
 
 // StatsDelta is the difference between two pg_stat_statements snapshots.
 type StatsDelta struct {
-	NewQueries     []StatementSnapshot
+	// NewQueries holds queries first seen during observation.
+	NewQueries []StatementSnapshot
+	// ChangedQueries holds queries whose stats changed during observation.
 	ChangedQueries []ChangedQuery
-	DurationSecs   float64
+	// DurationSecs is the observation window length in seconds.
+	DurationSecs float64
 }
 
 // IsAvailable checks if pg_stat_statements is queryable.

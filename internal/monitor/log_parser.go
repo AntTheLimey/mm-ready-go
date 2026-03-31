@@ -10,21 +10,32 @@ import (
 
 // LogStatement represents a notable statement found in a log file.
 type LogStatement struct {
+	// LineNumber is the line number in the log file.
 	LineNumber int
-	Timestamp  string
-	Statement  string
+	// Timestamp is when the scan was performed.
+	Timestamp string
+	// Statement is the SQL statement text.
+	Statement string
+	// DurationMs is the statement execution time in milliseconds.
 	DurationMs *float64
 }
 
 // LogAnalysis aggregates log analysis results.
 type LogAnalysis struct {
-	TotalStatements   int
-	DDLStatements     []LogStatement
-	TruncateCascade   []LogStatement
-	CreateTempTable   []LogStatement
-	AdvisoryLocks     []LogStatement
+	// TotalStatements is the count of all parsed statements.
+	TotalStatements int
+	// DDLStatements is the count of DDL statements found.
+	DDLStatements []LogStatement
+	// TruncateCascade is the count of TRUNCATE CASCADE statements.
+	TruncateCascade []LogStatement
+	// CreateTempTable is the count of CREATE TEMP TABLE statements.
+	CreateTempTable []LogStatement
+	// AdvisoryLocks is the count of advisory lock operations.
+	AdvisoryLocks []LogStatement
+	// ConcurrentIndexes is the count of concurrent index operations.
 	ConcurrentIndexes []LogStatement
-	OtherNotable      []LogStatement
+	// OtherNotable is the count of other notable SQL patterns.
+	OtherNotable []LogStatement
 }
 
 // HasFindings returns true if any notable patterns were found.

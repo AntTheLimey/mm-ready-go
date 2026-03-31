@@ -74,37 +74,60 @@ func ParseSeverity(s string) (Severity, error) {
 
 // Finding represents a single issue discovered by a check.
 type Finding struct {
-	Severity    Severity       `json:"severity"`
-	CheckName   string         `json:"check_name"`
-	Category    string         `json:"category"`
-	Title       string         `json:"title"`
-	Detail      string         `json:"detail"`
-	ObjectName  string         `json:"object_name,omitempty"`
-	Remediation string         `json:"remediation,omitempty"`
-	Metadata    map[string]any `json:"metadata,omitempty"`
+	// Severity is the impact level of this finding.
+	Severity Severity `json:"severity"`
+	// CheckName identifies which check produced this finding.
+	CheckName string `json:"check_name"`
+	// Category is the check category.
+	Category string `json:"category"`
+	// Title is a short summary of the finding.
+	Title string `json:"title"`
+	// Detail is the full description of the finding.
+	Detail string `json:"detail"`
+	// ObjectName is the database object this finding relates to.
+	ObjectName string `json:"object_name,omitempty"`
+	// Remediation describes how to fix this finding.
+	Remediation string `json:"remediation,omitempty"`
+	// Metadata holds additional key-value data for this finding.
+	Metadata map[string]any `json:"metadata,omitempty"`
 }
 
 // CheckResult holds the outcome of running a single check.
 type CheckResult struct {
-	CheckName   string    `json:"check_name"`
-	Category    string    `json:"category"`
-	Description string    `json:"description"`
-	Findings    []Finding `json:"findings"`
-	Error       string    `json:"error,omitempty"`
-	Skipped     bool      `json:"skipped,omitempty"`
-	SkipReason  string    `json:"skip_reason,omitempty"`
+	// CheckName identifies which check produced this finding.
+	CheckName string `json:"check_name"`
+	// Category is the check category.
+	Category string `json:"category"`
+	// Description is a human-readable summary.
+	Description string `json:"description"`
+	// Findings holds all findings from this check.
+	Findings []Finding `json:"findings"`
+	// Error holds the error message if the check failed.
+	Error string `json:"error,omitempty"`
+	// Skipped indicates whether the check was skipped.
+	Skipped bool `json:"skipped,omitempty"`
+	// SkipReason explains why the check was skipped.
+	SkipReason string `json:"skip_reason,omitempty"`
 }
 
 // ScanReport is the top-level result of scanning a database.
 type ScanReport struct {
-	Database    string        `json:"database"`
-	Host        string        `json:"host"`
-	Port        int           `json:"port"`
-	Timestamp   time.Time     `json:"timestamp"`
-	Results     []CheckResult `json:"results"`
-	PGVersion   string        `json:"pg_version"`
-	SpockTarget string        `json:"spock_target"`
-	ScanMode    string        `json:"scan_mode"`
+	// Database is the database name.
+	Database string `json:"database"`
+	// Host is the database server hostname.
+	Host string `json:"host"`
+	// Port is the database server port.
+	Port int `json:"port"`
+	// Timestamp is when the scan was performed.
+	Timestamp time.Time `json:"timestamp"`
+	// Results holds all check results.
+	Results []CheckResult `json:"results"`
+	// PGVersion is the PostgreSQL server version.
+	PGVersion string `json:"pg_version"`
+	// SpockTarget is the target Spock version.
+	SpockTarget string `json:"spock_target"`
+	// ScanMode is the mode used for this scan.
+	ScanMode string `json:"scan_mode"`
 }
 
 // NewScanReport creates a ScanReport with sensible defaults.

@@ -11,21 +11,27 @@ import (
 
 // CheckConfig holds which checks to include/exclude.
 type CheckConfig struct {
+	// Exclude lists check names to skip.
 	Exclude     []string
 	IncludeOnly []string // nil = no whitelist
 }
 
 // ReportConfig holds report generation options.
 type ReportConfig struct {
-	TodoList            bool
+	// TodoList controls whether the To Do list is included.
+	TodoList bool
+	// TodoIncludeConsider includes CONSIDER items in the To Do list.
 	TodoIncludeConsider bool
 }
 
 // Config is the complete configuration for mm-ready-go.
 type Config struct {
-	Checks     CheckConfig
+	// Checks holds global check configuration.
+	Checks CheckConfig
+	// ModeChecks holds per-mode check configurations.
 	ModeChecks map[string]CheckConfig
-	Report     ReportConfig
+	// Report holds report generation options.
+	Report ReportConfig
 }
 
 // Default returns a Config with sensible defaults.
@@ -133,25 +139,36 @@ func MergeCLI(cfg Config, mode string, cliExclude []string, cliIncludeOnly []str
 // YAML deserialization types (private)
 
 type yamlConfig struct {
-	Checks  yamlCheckConfig  `yaml:"checks"`
-	Report  yamlReportConfig `yaml:"report"`
-	Scan    *yamlModeConfig  `yaml:"scan"`
-	Audit   *yamlModeConfig  `yaml:"audit"`
-	Analyze *yamlModeConfig  `yaml:"analyze"`
-	Monitor *yamlModeConfig  `yaml:"monitor"`
+	// Checks holds global check configuration.
+	Checks yamlCheckConfig `yaml:"checks"`
+	// Report holds report generation options.
+	Report yamlReportConfig `yaml:"report"`
+	// Scan holds scan-mode check configuration.
+	Scan *yamlModeConfig `yaml:"scan"`
+	// Audit holds audit-mode check configuration.
+	Audit *yamlModeConfig `yaml:"audit"`
+	// Analyze holds analyze-mode check configuration.
+	Analyze *yamlModeConfig `yaml:"analyze"`
+	// Monitor holds monitor-mode check configuration.
+	Monitor *yamlModeConfig `yaml:"monitor"`
 }
 
 type yamlCheckConfig struct {
-	Exclude     []string `yaml:"exclude"`
+	// Exclude lists check names to skip.
+	Exclude []string `yaml:"exclude"`
+	// IncludeOnly lists check names to run exclusively.
 	IncludeOnly []string `yaml:"include_only"`
 }
 
 type yamlReportConfig struct {
-	TodoList            *bool `yaml:"todo_list"`
+	// TodoList controls whether the To Do list is included.
+	TodoList *bool `yaml:"todo_list"`
+	// TodoIncludeConsider includes CONSIDER items in the To Do list.
 	TodoIncludeConsider *bool `yaml:"todo_include_consider"`
 }
 
 type yamlModeConfig struct {
+	// Checks holds global check configuration.
 	Checks yamlCheckConfig `yaml:"checks"`
 }
 

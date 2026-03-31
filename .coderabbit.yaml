@@ -23,10 +23,11 @@ reviews:
     enabled: true
     auto_incremental_review: true
 
-  # Disable generic docstring check — Go doc coverage is enforced via golangci-lint + revive
+  # Docstring coverage for exported Go identifiers
   pre_merge_checks:
     docstrings:
-      enabled: false
+      mode: warning
+      threshold: 80
 
   # Enable relevant tools
   tools:

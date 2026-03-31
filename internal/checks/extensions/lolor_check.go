@@ -60,9 +60,12 @@ func (c LolorCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, 
 	}
 
 	var extVersion *string
-	_ = conn.QueryRow(ctx,
+	err = conn.QueryRow(ctx,
 		`SELECT extversion FROM pg_catalog.pg_extension WHERE extname = 'lolor';`,
 	).Scan(&extVersion)
+	if err != nil && err != pgx.ErrNoRows {
+		return nil, fmt.Errorf("lolor_check: query extension version: %w", err)
+	}
 
 	if extVersion == nil {
 		return []models.Finding{{

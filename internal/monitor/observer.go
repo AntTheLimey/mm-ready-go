@@ -15,12 +15,18 @@ import (
 
 // Options configures a monitor run.
 type Options struct {
-	Host     string
-	Port     int
-	DBName   string
+	// Host is the database server hostname.
+	Host string
+	// Port is the database server port.
+	Port int
+	// DBName is the database name.
+	DBName string
+	// Duration is the observation window in seconds.
 	Duration int
-	LogFile  string
-	Verbose  bool
+	// LogFile is the path to the PostgreSQL log file.
+	LogFile string
+	// Verbose enables detailed progress output.
+	Verbose bool
 }
 
 // RunMonitor runs a full scan plus time-based observation.

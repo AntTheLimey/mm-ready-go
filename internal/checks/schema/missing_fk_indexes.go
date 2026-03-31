@@ -43,6 +43,7 @@ func (c MissingFKIndexesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]model
 		FROM pg_catalog.pg_constraint co
 		JOIN pg_catalog.pg_class cc ON cc.oid = co.conrelid
 		JOIN pg_catalog.pg_namespace cn ON cn.oid = cc.relnamespace
+		// CROSS is the c r o s s value.
 		CROSS JOIN LATERAL unnest(co.conkey) WITH ORDINALITY AS x(attnum, ordinality)
 		JOIN pg_catalog.pg_attribute a
 		  ON a.attrelid = co.conrelid AND a.attnum = x.attnum

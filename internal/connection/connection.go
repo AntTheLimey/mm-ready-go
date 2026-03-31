@@ -13,15 +13,25 @@ import (
 
 // Config holds the parameters needed to connect to a PostgreSQL database.
 type Config struct {
-	Host        string
-	Port        int
-	DBName      string
-	User        string
-	Password    string
-	DSN         string
-	SSLMode     string
-	SSLCert     string
-	SSLKey      string
+	// Host is the database server hostname.
+	Host string
+	// Port is the database server port.
+	Port int
+	// DBName is the database name.
+	DBName string
+	// User is the database user.
+	User string
+	// Password is the database password.
+	Password string
+	// DSN is the full connection URI.
+	DSN string
+	// SSLMode is the SSL connection mode.
+	SSLMode string
+	// SSLCert is the path to the SSL client certificate.
+	SSLCert string
+	// SSLKey is the path to the SSL client key.
+	SSLKey string
+	// SSLRootCert is the path to the SSL root CA certificate.
 	SSLRootCert string
 }
 
