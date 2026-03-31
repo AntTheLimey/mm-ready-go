@@ -92,7 +92,9 @@ func buildConnString(cfg Config) string {
 }
 
 func buildTLSConfig(cfg Config) (*tls.Config, error) {
-	tlsCfg := &tls.Config{}
+	tlsCfg := &tls.Config{
+		MinVersion: tls.VersionTLS12,
+	}
 
 	switch cfg.SSLMode {
 	case "require":
@@ -118,6 +120,9 @@ func buildTLSConfig(cfg Config) (*tls.Config, error) {
 		tlsCfg.RootCAs = pool
 	}
 
+	if (cfg.SSLCert != "") != (cfg.SSLKey != "") {
+		return nil, fmt.Errorf("both --sslcert and --sslkey must be provided together")
+	}
 	if cfg.SSLCert != "" && cfg.SSLKey != "" {
 		cert, err := tls.LoadX509KeyPair(cfg.SSLCert, cfg.SSLKey)
 		if err != nil {

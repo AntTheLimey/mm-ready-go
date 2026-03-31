@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (ForeignKeysCheck) Name() string     { return "foreign_keys" }
+func (ForeignKeysCheck) Name() string { return "foreign_keys" }
+
 // Category returns the check category.
 func (ForeignKeysCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (ForeignKeysCheck) Mode() string     { return "scan" }
+func (ForeignKeysCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (ForeignKeysCheck) Description() string {
 	return "Foreign key relationships — replication ordering and cross-node considerations"

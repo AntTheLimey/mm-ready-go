@@ -17,13 +17,16 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (c *RepsetMembershipCheck) Name() string     { return "repset_membership" }
+func (c *RepsetMembershipCheck) Name() string { return "repset_membership" }
+
 // Category returns the check category.
 func (c *RepsetMembershipCheck) Category() string { return "replication" }
+
 // Description returns a human-readable summary of this check.
 func (c *RepsetMembershipCheck) Description() string {
 	return "Verify all user tables are in a Spock replication set"
 }
+
 // Mode returns when this check runs (scan, audit, or both).
 func (c *RepsetMembershipCheck) Mode() string { return "audit" }
 

@@ -19,11 +19,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (TempTableQueriesCheck) Name() string     { return "temp_table_queries" }
+func (TempTableQueriesCheck) Name() string { return "temp_table_queries" }
+
 // Category returns the check category.
 func (TempTableQueriesCheck) Category() string { return "sql_patterns" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (TempTableQueriesCheck) Mode() string     { return "scan" }
+func (TempTableQueriesCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (TempTableQueriesCheck) Description() string {
 	return "CREATE TEMP TABLE in SQL — session-local, not replicated"

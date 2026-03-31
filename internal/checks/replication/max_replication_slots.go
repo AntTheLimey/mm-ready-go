@@ -19,13 +19,16 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (c *MaxReplicationSlotsCheck) Name() string     { return "max_replication_slots" }
+func (c *MaxReplicationSlotsCheck) Name() string { return "max_replication_slots" }
+
 // Category returns the check category.
 func (c *MaxReplicationSlotsCheck) Category() string { return "replication" }
+
 // Description returns a human-readable summary of this check.
 func (c *MaxReplicationSlotsCheck) Description() string {
 	return "Sufficient replication slots for Spock node connections"
 }
+
 // Mode returns when this check runs (scan, audit, or both).
 func (c *MaxReplicationSlotsCheck) Mode() string { return "scan" }
 

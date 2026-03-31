@@ -18,13 +18,16 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (IdleTransactionTimeoutCheck) Name() string     { return "idle_transaction_timeout" }
+func (IdleTransactionTimeoutCheck) Name() string { return "idle_transaction_timeout" }
+
 // Category returns the check category.
 func (IdleTransactionTimeoutCheck) Category() string { return "config" }
+
 // Description returns a human-readable summary of this check.
 func (IdleTransactionTimeoutCheck) Description() string {
 	return "Idle-in-transaction timeout — long idle transactions block VACUUM and cause bloat"
 }
+
 // Mode returns when this check runs (scan, audit, or both).
 func (IdleTransactionTimeoutCheck) Mode() string { return "scan" }
 

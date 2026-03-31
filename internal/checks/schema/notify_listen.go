@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (NotifyListenCheck) Name() string     { return "notify_listen" }
+func (NotifyListenCheck) Name() string { return "notify_listen" }
+
 // Category returns the check category.
 func (NotifyListenCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (NotifyListenCheck) Mode() string     { return "scan" }
+func (NotifyListenCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (NotifyListenCheck) Description() string {
 	return "LISTEN/NOTIFY usage — notifications are not replicated by Spock"

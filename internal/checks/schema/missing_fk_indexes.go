@@ -19,11 +19,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (MissingFKIndexesCheck) Name() string     { return "missing_fk_indexes" }
+func (MissingFKIndexesCheck) Name() string { return "missing_fk_indexes" }
+
 // Category returns the check category.
 func (MissingFKIndexesCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (MissingFKIndexesCheck) Mode() string     { return "scan" }
+func (MissingFKIndexesCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (MissingFKIndexesCheck) Description() string {
 	return "Foreign key columns without indexes — slow cascades and lock contention"

@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (ExtensionVersionsCheck) Name() string     { return "extension_versions" }
+func (ExtensionVersionsCheck) Name() string { return "extension_versions" }
+
 // Category returns the check category.
 func (ExtensionVersionsCheck) Category() string { return "extensions" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (ExtensionVersionsCheck) Mode() string     { return "scan" }
+func (ExtensionVersionsCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (ExtensionVersionsCheck) Description() string {
 	return "Check installed extension versions against available upgrades"

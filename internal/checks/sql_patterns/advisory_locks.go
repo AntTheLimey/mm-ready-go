@@ -19,11 +19,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (AdvisoryLocksCheck) Name() string     { return "advisory_locks" }
+func (AdvisoryLocksCheck) Name() string { return "advisory_locks" }
+
 // Category returns the check category.
 func (AdvisoryLocksCheck) Category() string { return "sql_patterns" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (AdvisoryLocksCheck) Mode() string     { return "scan" }
+func (AdvisoryLocksCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (AdvisoryLocksCheck) Description() string {
 	return "Advisory lock usage — locks are node-local, not replicated"

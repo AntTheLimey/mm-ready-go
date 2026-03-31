@@ -19,11 +19,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (SequenceAuditCheck) Name() string     { return "sequence_audit" }
+func (SequenceAuditCheck) Name() string { return "sequence_audit" }
+
 // Category returns the check category.
 func (SequenceAuditCheck) Category() string { return "sequences" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (SequenceAuditCheck) Mode() string     { return "scan" }
+func (SequenceAuditCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (SequenceAuditCheck) Description() string {
 	return "All sequences, types, and ownership — need snowflake migration plan"

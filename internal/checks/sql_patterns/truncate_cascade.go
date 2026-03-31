@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (TruncateCascadeCheck) Name() string     { return "truncate_cascade" }
+func (TruncateCascadeCheck) Name() string { return "truncate_cascade" }
+
 // Category returns the check category.
 func (TruncateCascadeCheck) Category() string { return "sql_patterns" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (TruncateCascadeCheck) Mode() string     { return "scan" }
+func (TruncateCascadeCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (TruncateCascadeCheck) Description() string {
 	return "TRUNCATE ... CASCADE and RESTART IDENTITY — replication behaviour caveats"

@@ -19,13 +19,16 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (c *MaxWorkerProcessesCheck) Name() string     { return "max_worker_processes" }
+func (c *MaxWorkerProcessesCheck) Name() string { return "max_worker_processes" }
+
 // Category returns the check category.
 func (c *MaxWorkerProcessesCheck) Category() string { return "replication" }
+
 // Description returns a human-readable summary of this check.
 func (c *MaxWorkerProcessesCheck) Description() string {
 	return "Sufficient worker processes for Spock background workers"
 }
+
 // Mode returns when this check runs (scan, audit, or both).
 func (c *MaxWorkerProcessesCheck) Mode() string { return "scan" }
 

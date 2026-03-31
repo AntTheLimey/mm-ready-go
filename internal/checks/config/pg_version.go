@@ -30,13 +30,16 @@ var supportedMajors = map[int]bool{
 }
 
 // Name returns the unique identifier for this check.
-func (PgVersionCheck) Name() string        { return "pg_version" }
+func (PgVersionCheck) Name() string { return "pg_version" }
+
 // Category returns the check category.
-func (PgVersionCheck) Category() string    { return "config" }
+func (PgVersionCheck) Category() string { return "config" }
+
 // Description returns a human-readable summary of this check.
 func (PgVersionCheck) Description() string { return "PostgreSQL version compatibility with Spock 5" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (PgVersionCheck) Mode() string        { return "scan" }
+func (PgVersionCheck) Mode() string { return "scan" }
 
 // Run executes the check against the database connection.
 func (c PgVersionCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {

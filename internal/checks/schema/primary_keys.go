@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (PrimaryKeysCheck) Name() string     { return "primary_keys" }
+func (PrimaryKeysCheck) Name() string { return "primary_keys" }
+
 // Category returns the check category.
 func (PrimaryKeysCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (PrimaryKeysCheck) Mode() string     { return "scan" }
+func (PrimaryKeysCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (PrimaryKeysCheck) Description() string {
 	return "Tables without primary keys — affects Spock replication behaviour"

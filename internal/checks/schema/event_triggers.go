@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (EventTriggersCheck) Name() string     { return "event_triggers" }
+func (EventTriggersCheck) Name() string { return "event_triggers" }
+
 // Category returns the check category.
 func (EventTriggersCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (EventTriggersCheck) Mode() string     { return "scan" }
+func (EventTriggersCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (EventTriggersCheck) Description() string {
 	return "Event triggers — fire on DDL events, may interact with Spock DDL replication"

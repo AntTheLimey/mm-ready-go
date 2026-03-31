@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (PartitionedTablesCheck) Name() string     { return "partitioned_tables" }
+func (PartitionedTablesCheck) Name() string { return "partitioned_tables" }
+
 // Category returns the check category.
 func (PartitionedTablesCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (PartitionedTablesCheck) Mode() string     { return "scan" }
+func (PartitionedTablesCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (PartitionedTablesCheck) Description() string {
 	return "Partitioned tables — review partition strategy for Spock compatibility"

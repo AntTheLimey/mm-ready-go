@@ -19,11 +19,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (TablespaceUsageCheck) Name() string     { return "tablespace_usage" }
+func (TablespaceUsageCheck) Name() string { return "tablespace_usage" }
+
 // Category returns the check category.
 func (TablespaceUsageCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (TablespaceUsageCheck) Mode() string     { return "scan" }
+func (TablespaceUsageCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (TablespaceUsageCheck) Description() string {
 	return "Non-default tablespace usage — tablespaces must exist on all nodes"

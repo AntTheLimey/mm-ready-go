@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (SequencePKsCheck) Name() string     { return "sequence_pks" }
+func (SequencePKsCheck) Name() string { return "sequence_pks" }
+
 // Category returns the check category.
 func (SequencePKsCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (SequencePKsCheck) Mode() string     { return "scan" }
+func (SequencePKsCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (SequencePKsCheck) Description() string {
 	return "Primary keys using standard sequences — must migrate to pgEdge snowflake"

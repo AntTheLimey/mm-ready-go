@@ -17,13 +17,16 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (c *HbaConfigCheck) Name() string     { return "hba_config" }
+func (c *HbaConfigCheck) Name() string { return "hba_config" }
+
 // Category returns the check category.
 func (c *HbaConfigCheck) Category() string { return "replication" }
+
 // Description returns a human-readable summary of this check.
 func (c *HbaConfigCheck) Description() string {
 	return "pg_hba.conf must allow replication connections between nodes"
 }
+
 // Mode returns when this check runs (scan, audit, or both).
 func (c *HbaConfigCheck) Mode() string { return "scan" }
 

@@ -19,11 +19,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (NumericColumnsCheck) Name() string     { return "numeric_columns" }
+func (NumericColumnsCheck) Name() string { return "numeric_columns" }
+
 // Category returns the check category.
 func (NumericColumnsCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (NumericColumnsCheck) Mode() string     { return "scan" }
+func (NumericColumnsCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (NumericColumnsCheck) Description() string {
 	return "Numeric columns that may be Delta-Apply candidates (counters, balances, etc.)"

@@ -19,11 +19,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (ConcurrentIndexesCheck) Name() string     { return "concurrent_indexes" }
+func (ConcurrentIndexesCheck) Name() string { return "concurrent_indexes" }
+
 // Category returns the check category.
 func (ConcurrentIndexesCheck) Category() string { return "sql_patterns" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (ConcurrentIndexesCheck) Mode() string     { return "scan" }
+func (ConcurrentIndexesCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (ConcurrentIndexesCheck) Description() string {
 	return "CREATE INDEX CONCURRENTLY — must be created manually on each node"

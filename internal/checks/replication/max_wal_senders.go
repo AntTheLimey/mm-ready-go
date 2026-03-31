@@ -17,13 +17,16 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (c *MaxWalSendersCheck) Name() string     { return "max_wal_senders" }
+func (c *MaxWalSendersCheck) Name() string { return "max_wal_senders" }
+
 // Category returns the check category.
 func (c *MaxWalSendersCheck) Category() string { return "replication" }
+
 // Description returns a human-readable summary of this check.
 func (c *MaxWalSendersCheck) Description() string {
 	return "Sufficient max_wal_senders for Spock logical replication"
 }
+
 // Mode returns when this check runs (scan, audit, or both).
 func (c *MaxWalSendersCheck) Mode() string { return "scan" }
 

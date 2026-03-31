@@ -19,11 +19,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (MultipleUniqueIndexesCheck) Name() string     { return "multiple_unique_indexes" }
+func (MultipleUniqueIndexesCheck) Name() string { return "multiple_unique_indexes" }
+
 // Category returns the check category.
 func (MultipleUniqueIndexesCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (MultipleUniqueIndexesCheck) Mode() string     { return "scan" }
+func (MultipleUniqueIndexesCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (MultipleUniqueIndexesCheck) Description() string {
 	return "Tables with multiple unique indexes — affects Spock conflict resolution"

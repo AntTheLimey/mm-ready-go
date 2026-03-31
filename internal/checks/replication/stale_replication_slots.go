@@ -17,13 +17,16 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (c *StaleReplicationSlotsCheck) Name() string     { return "stale_replication_slots" }
+func (c *StaleReplicationSlotsCheck) Name() string { return "stale_replication_slots" }
+
 // Category returns the check category.
 func (c *StaleReplicationSlotsCheck) Category() string { return "replication" }
+
 // Description returns a human-readable summary of this check.
 func (c *StaleReplicationSlotsCheck) Description() string {
 	return "Inactive replication slots — retaining WAL and risk filling disk"
 }
+
 // Mode returns when this check runs (scan, audit, or both).
 func (c *StaleReplicationSlotsCheck) Mode() string { return "audit" }
 

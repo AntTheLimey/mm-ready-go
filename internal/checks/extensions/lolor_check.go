@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (LolorCheck) Name() string     { return "lolor_check" }
+func (LolorCheck) Name() string { return "lolor_check" }
+
 // Category returns the check category.
 func (LolorCheck) Category() string { return "extensions" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (LolorCheck) Mode() string     { return "scan" }
+func (LolorCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (LolorCheck) Description() string {
 	return "LOLOR extension — required for replicating large objects"

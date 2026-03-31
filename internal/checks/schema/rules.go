@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (RulesCheck) Name() string     { return "rules" }
+func (RulesCheck) Name() string { return "rules" }
+
 // Category returns the check category.
 func (RulesCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (RulesCheck) Mode() string     { return "scan" }
+func (RulesCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (RulesCheck) Description() string {
 	return "Rules on tables — can cause unexpected behaviour with logical replication"

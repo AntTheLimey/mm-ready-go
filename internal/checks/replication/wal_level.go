@@ -18,13 +18,16 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (c *WalLevelCheck) Name() string     { return "wal_level" }
+func (c *WalLevelCheck) Name() string { return "wal_level" }
+
 // Category returns the check category.
 func (c *WalLevelCheck) Category() string { return "replication" }
+
 // Description returns a human-readable summary of this check.
 func (c *WalLevelCheck) Description() string {
 	return "wal_level must be 'logical' for Spock replication"
 }
+
 // Mode returns when this check runs (scan, audit, or both).
 func (c *WalLevelCheck) Mode() string { return "scan" }
 

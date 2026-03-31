@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (UpdateDeleteNoPkCheck) Name() string     { return "tables_update_delete_no_pk" }
+func (UpdateDeleteNoPkCheck) Name() string { return "tables_update_delete_no_pk" }
+
 // Category returns the check category.
 func (UpdateDeleteNoPkCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (UpdateDeleteNoPkCheck) Mode() string     { return "scan" }
+func (UpdateDeleteNoPkCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (UpdateDeleteNoPkCheck) Description() string {
 	return "Tables without primary keys that have UPDATE/DELETE activity — " +

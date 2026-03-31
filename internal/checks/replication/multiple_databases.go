@@ -18,13 +18,16 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (c *MultipleDatabasesCheck) Name() string     { return "multiple_databases" }
+func (c *MultipleDatabasesCheck) Name() string { return "multiple_databases" }
+
 // Category returns the check category.
 func (c *MultipleDatabasesCheck) Category() string { return "replication" }
+
 // Description returns a human-readable summary of this check.
 func (c *MultipleDatabasesCheck) Description() string {
 	return "More than one user database in the instance — Spock supports one DB per instance"
 }
+
 // Mode returns when this check runs (scan, audit, or both).
 func (c *MultipleDatabasesCheck) Mode() string { return "scan" }
 

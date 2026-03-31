@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (ExclusionConstraintsCheck) Name() string     { return "exclusion_constraints" }
+func (ExclusionConstraintsCheck) Name() string { return "exclusion_constraints" }
+
 // Category returns the check category.
 func (ExclusionConstraintsCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (ExclusionConstraintsCheck) Mode() string     { return "scan" }
+func (ExclusionConstraintsCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (ExclusionConstraintsCheck) Description() string {
 	return "Exclusion constraints — not enforceable across Spock nodes"

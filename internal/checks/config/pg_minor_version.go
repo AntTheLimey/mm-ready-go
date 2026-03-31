@@ -18,13 +18,16 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (PgMinorVersionCheck) Name() string     { return "pg_minor_version" }
+func (PgMinorVersionCheck) Name() string { return "pg_minor_version" }
+
 // Category returns the check category.
 func (PgMinorVersionCheck) Category() string { return "config" }
+
 // Description returns a human-readable summary of this check.
 func (PgMinorVersionCheck) Description() string {
 	return "PostgreSQL minor version — all cluster nodes should match"
 }
+
 // Mode returns when this check runs (scan, audit, or both).
 func (PgMinorVersionCheck) Mode() string { return "audit" }
 

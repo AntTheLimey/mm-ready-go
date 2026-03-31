@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (RowLevelSecurityCheck) Name() string     { return "row_level_security" }
+func (RowLevelSecurityCheck) Name() string { return "row_level_security" }
+
 // Category returns the check category.
 func (RowLevelSecurityCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (RowLevelSecurityCheck) Mode() string     { return "scan" }
+func (RowLevelSecurityCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (RowLevelSecurityCheck) Description() string {
 	return "Row-level security policies — apply worker runs as superuser, bypasses RLS"

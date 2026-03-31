@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (InheritanceCheck) Name() string     { return "inheritance" }
+func (InheritanceCheck) Name() string { return "inheritance" }
+
 // Category returns the check category.
 func (InheritanceCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (InheritanceCheck) Mode() string     { return "scan" }
+func (InheritanceCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (InheritanceCheck) Description() string {
 	return "Table inheritance (non-partition) — not well supported in logical replication"

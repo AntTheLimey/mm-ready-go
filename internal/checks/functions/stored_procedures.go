@@ -20,11 +20,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (StoredProceduresCheck) Name() string     { return "stored_procedures" }
+func (StoredProceduresCheck) Name() string { return "stored_procedures" }
+
 // Category returns the check category.
 func (StoredProceduresCheck) Category() string { return "functions" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (StoredProceduresCheck) Mode() string     { return "scan" }
+func (StoredProceduresCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (StoredProceduresCheck) Description() string {
 	return "Audit stored procedures/functions for write operations and DDL"

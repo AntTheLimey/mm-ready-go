@@ -19,11 +19,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (EnumTypesCheck) Name() string     { return "enum_types" }
+func (EnumTypesCheck) Name() string { return "enum_types" }
+
 // Category returns the check category.
 func (EnumTypesCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (EnumTypesCheck) Mode() string     { return "scan" }
+func (EnumTypesCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (EnumTypesCheck) Description() string {
 	return "ENUM types — DDL changes to enums require multi-node coordination"

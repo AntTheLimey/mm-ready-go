@@ -19,11 +19,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (DdlStatementsCheck) Name() string     { return "ddl_statements" }
+func (DdlStatementsCheck) Name() string { return "ddl_statements" }
+
 // Category returns the check category.
 func (DdlStatementsCheck) Category() string { return "sql_patterns" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (DdlStatementsCheck) Mode() string     { return "scan" }
+func (DdlStatementsCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (DdlStatementsCheck) Description() string {
 	return "DDL statements — must use Spock DDL replication or manual coordination"

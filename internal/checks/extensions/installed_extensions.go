@@ -47,11 +47,14 @@ var warnExtensions = map[string]bool{
 }
 
 // Name returns the unique identifier for this check.
-func (InstalledExtensionsCheck) Name() string     { return "installed_extensions" }
+func (InstalledExtensionsCheck) Name() string { return "installed_extensions" }
+
 // Category returns the check category.
 func (InstalledExtensionsCheck) Category() string { return "extensions" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (InstalledExtensionsCheck) Mode() string     { return "scan" }
+func (InstalledExtensionsCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (InstalledExtensionsCheck) Description() string {
 	return "Audit installed extensions for known Spock compatibility issues"

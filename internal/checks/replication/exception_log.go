@@ -17,13 +17,16 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (c *ExceptionLogCheck) Name() string     { return "exception_log" }
+func (c *ExceptionLogCheck) Name() string { return "exception_log" }
+
 // Category returns the check category.
 func (c *ExceptionLogCheck) Category() string { return "replication" }
+
 // Description returns a human-readable summary of this check.
 func (c *ExceptionLogCheck) Description() string {
 	return "Review Spock exception log for replication apply errors"
 }
+
 // Mode returns when this check runs (scan, audit, or both).
 func (c *ExceptionLogCheck) Mode() string { return "audit" }
 

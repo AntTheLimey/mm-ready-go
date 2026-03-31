@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (GeneratedColumnsCheck) Name() string     { return "generated_columns" }
+func (GeneratedColumnsCheck) Name() string { return "generated_columns" }
+
 // Category returns the check category.
 func (GeneratedColumnsCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (GeneratedColumnsCheck) Mode() string     { return "scan" }
+func (GeneratedColumnsCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (GeneratedColumnsCheck) Description() string {
 	return "Generated/stored columns — replication behavior differences"

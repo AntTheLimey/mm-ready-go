@@ -18,11 +18,14 @@ func init() {
 }
 
 // Name returns the unique identifier for this check.
-func (LargeObjectsCheck) Name() string     { return "large_objects" }
+func (LargeObjectsCheck) Name() string { return "large_objects" }
+
 // Category returns the check category.
 func (LargeObjectsCheck) Category() string { return "schema" }
+
 // Mode returns when this check runs (scan, audit, or both).
-func (LargeObjectsCheck) Mode() string     { return "scan" }
+func (LargeObjectsCheck) Mode() string { return "scan" }
+
 // Description returns a human-readable summary of this check.
 func (LargeObjectsCheck) Description() string {
 	return "Large object (LOB) usage — logical decoding does not support them"
