@@ -22,10 +22,11 @@ jobs:
       - name: Go vet
         run: go vet ./...
 
+      - name: Install golangci-lint
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
       - name: golangci-lint
-        uses: golangci/golangci-lint-action@v6
-        with:
-          version: latest
+        run: golangci-lint run
 
   test:
     name: Unit Tests
@@ -102,8 +103,11 @@ jobs:
             --dbname mmready --user postgres --password postgres \
             --format json --output scan-report.json -v
           python3 -c "
-          import json
-          with open('scan-report.json') as f:
+          import glob, json, sys
+          files = glob.glob('scan-report*.json')
+          if not files:
+              print('No scan report found'); sys.exit(1)
+          with open(files[0]) as f:
               report = json.load(f)
           s = report['summary']
           print(f\"Checks run: {s['total_checks']}\")
@@ -116,8 +120,11 @@ jobs:
           PGPASSWORD=postgres /usr/lib/postgresql/18/bin/pg_dump -h localhost -U postgres -d mmready --schema-only > schema.sql
           ./bin/mm-ready-go analyze --file schema.sql --format json --output analyze-report.json -v
           python3 -c "
-          import json
-          with open('analyze-report.json') as f:
+          import glob, json, sys
+          files = glob.glob('analyze-report*.json')
+          if not files:
+              print('No analyze report found'); sys.exit(1)
+          with open(files[0]) as f:
               report = json.load(f)
           s = report['summary']
           print(f\"Analyze checks: {s['total_checks']}\")
@@ -131,6 +138,6 @@ jobs:
         with:
           name: test-reports
           path: |
-            scan-report.json
-            analyze-report.json
+            scan-report*.json
+            analyze-report*.json
             schema.sql
