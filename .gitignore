@@ -30,5 +30,6 @@ reports/
 # Specs and plans
 docs/superpowers/
 *.html
+!docs/**/*.html
 *.json
 !go.sum
