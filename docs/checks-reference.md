@@ -5,8 +5,9 @@ Complete reference for all 57 mm-ready-go checks. Each check implements the
 
 Checks are organized by category. Within each category, the mode column
 indicates when the check runs:
-- **scan** — Pre-Spock readiness assessment (default)
-- **audit** — Post-Spock health check (requires Spock installed)
+- `scan` - pre-Spock readiness assessment (default).
+- `audit` - post-Spock health check (requires Spock
+  installed).
 
 ---
 
@@ -19,7 +20,7 @@ indicates when the check runs:
 | **File** | `internal/checks/schema/primary_keys.go` |
 | **Mode** | scan |
 | **Severity** | WARNING |
-| **Description** | Tables without primary keys — affects Spock replication behaviour |
+| **Description** | Tables without primary keys - affects Spock replication behaviour |
 
 Queries `pg_class` for user tables that have no primary key constraint.
 
@@ -39,19 +40,19 @@ the table is genuinely insert-only (e.g. an event log), no action required.
 | **File** | `internal/checks/schema/identity_replica.go` |
 | **Mode** | scan |
 | **Severity** | CRITICAL |
-| **Description** | Tables with UPDATE/DELETE activity but no primary key — operations silently dropped |
+| **Description** | Tables with UPDATE/DELETE activity but no primary key - operations silently dropped |
 
 Queries `pg_stat_user_tables` for tables without primary keys that have
 non-zero `n_tup_upd` or `n_tup_del` counters.
 
 This is the most dangerous finding. These tables will be placed in the
 `default_insert_only` replication set, and their UPDATE/DELETE operations
-will be silently dropped on other nodes — causing data loss.
+will be silently dropped on other nodes - causing data loss.
 
 Tables that are insert-only (no updates/deletes) are reported as INFO instead.
 
 **Remediation:** Add a primary key. Note: REPLICA IDENTITY FULL is NOT a
-substitute — Spock uses replication sets, not replica identity, to determine
+substitute - Spock uses replication sets, not replica identity, to determine
 replication behavior.
 
 ---
@@ -63,7 +64,7 @@ replication behavior.
 | **File** | `internal/checks/schema/deferrable_constraints.go` |
 | **Mode** | scan |
 | **Severity** | CRITICAL (PK) / WARNING (unique) |
-| **Description** | Deferrable unique/PK constraints — silently skipped by Spock conflict resolution |
+| **Description** | Deferrable unique/PK constraints - silently skipped by Spock conflict resolution |
 
 Queries `pg_constraint` for primary key and unique constraints where
 `condeferrable = true`.
@@ -87,7 +88,7 @@ undetected, potentially causing duplicate key violations.
 | **File** | `internal/checks/schema/exclusion_constraints.go` |
 | **Mode** | scan |
 | **Severity** | WARNING |
-| **Description** | Exclusion constraints — not enforceable across nodes |
+| **Description** | Exclusion constraints - not enforceable across nodes |
 
 Queries `pg_constraint` for exclusion constraints (`contype = 'x'`).
 
@@ -106,7 +107,7 @@ writes data that could conflict under this constraint.
 | **File** | `internal/checks/schema/foreign_keys.go` |
 | **Mode** | scan |
 | **Severity** | WARNING (CASCADE) / INFO (summary) |
-| **Description** | Foreign key relationships — replication ordering and cross-node considerations |
+| **Description** | Foreign key relationships - replication ordering and cross-node considerations |
 
 Queries `pg_constraint` for foreign key constraints, including delete and
 update action types.
@@ -127,7 +128,7 @@ cascade operations through a single node.
 | **File** | `internal/checks/schema/sequence_pks.go` |
 | **Mode** | scan |
 | **Severity** | CRITICAL |
-| **Description** | Primary keys using standard sequences — must migrate to pgEdge snowflake |
+| **Description** | Primary keys using standard sequences - must migrate to pgEdge snowflake |
 
 Queries `pg_constraint` and `pg_attribute` to find primary key columns backed
 by sequences (via `pg_get_serial_sequence()`) or identity columns.
@@ -146,7 +147,7 @@ independently. Must migrate to pgEdge Snowflake for globally unique IDs.
 | **File** | `internal/checks/schema/unlogged_tables.go` |
 | **Mode** | scan |
 | **Severity** | WARNING |
-| **Description** | UNLOGGED tables — not written to WAL, cannot be replicated |
+| **Description** | UNLOGGED tables - not written to WAL, cannot be replicated |
 
 Queries `pg_class` for tables with `relpersistence = 'u'`.
 
@@ -162,7 +163,7 @@ needed.
 | **File** | `internal/checks/schema/large_objects.go` |
 | **Mode** | scan |
 | **Severity** | WARNING |
-| **Description** | Large object (LOB) usage — logical decoding does not support them |
+| **Description** | Large object (LOB) usage - logical decoding does not support them |
 
 Two queries:
 1. Counts rows in `pg_largeobject_metadata`
@@ -180,7 +181,7 @@ object management, or store binary data in BYTEA columns.
 | **File** | `internal/checks/schema/generated_columns.go` |
 | **Mode** | scan |
 | **Severity** | CONSIDER |
-| **Description** | Generated/stored columns — replication behavior differences |
+| **Description** | Generated/stored columns - replication behavior differences |
 
 Queries `pg_attribute` for columns where `attgenerated != ''`.
 
@@ -199,7 +200,7 @@ nodes.
 | **File** | `internal/checks/schema/partitioned_tables.go` |
 | **Mode** | scan |
 | **Severity** | CONSIDER |
-| **Description** | Partitioned tables — review partition strategy for Spock compatibility |
+| **Description** | Partitioned tables - review partition strategy for Spock compatibility |
 
 Spock 5 supports partition replication, but partition structure must be
 identical on all nodes.
@@ -215,7 +216,7 @@ identical on all nodes.
 | **File** | `internal/checks/schema/inheritance.go` |
 | **Mode** | scan |
 | **Severity** | WARNING |
-| **Description** | Table inheritance (non-partition) — not well supported in logical replication |
+| **Description** | Table inheritance (non-partition) - not well supported in logical replication |
 
 Logical replication does not replicate through inheritance hierarchies.
 
@@ -231,7 +232,7 @@ tables.
 | **File** | `internal/checks/schema/column_defaults.go` |
 | **Mode** | scan |
 | **Severity** | WARNING |
-| **Description** | Volatile column defaults — may differ across nodes |
+| **Description** | Volatile column defaults - may differ across nodes |
 
 Detects volatile patterns: `now()`, `current_timestamp`, `random()`,
 `gen_random_uuid()`, etc.
@@ -265,7 +266,7 @@ Delta-Apply in Spock.
 | **File** | `internal/checks/schema/multiple_unique_indexes.go` |
 | **Mode** | scan |
 | **Severity** | CONSIDER |
-| **Description** | Tables with multiple unique indexes — affects conflict resolution |
+| **Description** | Tables with multiple unique indexes - affects conflict resolution |
 
 **Remediation:** Review whether all unique indexes are necessary for conflict
 detection.
@@ -279,7 +280,7 @@ detection.
 | **File** | `internal/checks/schema/enum_types.go` |
 | **Mode** | scan |
 | **Severity** | CONSIDER |
-| **Description** | ENUM types — DDL changes require multi-node coordination |
+| **Description** | ENUM types - DDL changes require multi-node coordination |
 
 **Remediation:** Use Spock DDL replication for enum modifications, or consider
 a lookup table for frequently changing values.
@@ -293,7 +294,7 @@ a lookup table for frequently changing values.
 | **File** | `internal/checks/schema/rules.go` |
 | **Mode** | scan |
 | **Severity** | WARNING (INSTEAD rules) / CONSIDER (other rules) |
-| **Description** | Rules on tables — can cause unexpected behaviour with logical replication |
+| **Description** | Rules on tables - can cause unexpected behaviour with logical replication |
 
 **Remediation:** Convert rules to triggers (controllable via
 `session_replication_role`) or disable rules on subscriber nodes.
@@ -307,7 +308,7 @@ a lookup table for frequently changing values.
 | **File** | `internal/checks/schema/row_level_security.go` |
 | **Mode** | scan |
 | **Severity** | WARNING |
-| **Description** | Row-level security policies — apply worker runs as superuser, bypasses RLS |
+| **Description** | Row-level security policies - apply worker runs as superuser, bypasses RLS |
 
 **Remediation:** Use replication sets for data filtering instead of relying on
 RLS for subscriber-side restrictions.
@@ -321,7 +322,7 @@ RLS for subscriber-side restrictions.
 | **File** | `internal/checks/schema/event_triggers.go` |
 | **Mode** | scan |
 | **Severity** | WARNING (REPLICA) / CONSIDER (ALWAYS) / INFO (ORIGIN, DISABLED) |
-| **Description** | Event triggers — fire on DDL events, interact with Spock DDL replication |
+| **Description** | Event triggers - fire on DDL events, interact with Spock DDL replication |
 
 **Remediation:** Use ORIGIN mode for most triggers. Use ALWAYS only for
 DDL-automation triggers that must fire during Spock DDL replay.
@@ -335,7 +336,7 @@ DDL-automation triggers that must fire during Spock DDL replay.
 | **File** | `internal/checks/schema/notify_listen.go` |
 | **Mode** | scan |
 | **Severity** | WARNING (functions) / CONSIDER (pg_stat_statements) |
-| **Description** | LISTEN/NOTIFY usage — notifications are not replicated |
+| **Description** | LISTEN/NOTIFY usage - notifications are not replicated |
 
 **Remediation:** Ensure listeners connect to all nodes, or implement an
 application-level notification mechanism.
@@ -349,7 +350,7 @@ application-level notification mechanism.
 | **File** | `internal/checks/schema/tablespace_usage.go` |
 | **Mode** | scan |
 | **Severity** | CONSIDER |
-| **Description** | Non-default tablespace usage — tablespaces must exist on all nodes |
+| **Description** | Non-default tablespace usage - tablespaces must exist on all nodes |
 
 **Remediation:** Create matching tablespace names on all Spock nodes before
 initializing replication.
@@ -363,7 +364,7 @@ initializing replication.
 | **File** | `internal/checks/schema/temp_tables.go` |
 | **Mode** | scan |
 | **Severity** | INFO |
-| **Description** | Functions creating temporary tables — session-local, never replicated |
+| **Description** | Functions creating temporary tables - session-local, never replicated |
 
 **Remediation:** No action needed if temp table usage is intentional and
 node-local.
@@ -377,7 +378,7 @@ node-local.
 | **File** | `internal/checks/schema/missing_fk_indexes.go` |
 | **Mode** | scan |
 | **Severity** | WARNING |
-| **Description** | Foreign key columns without indexes — slow cascades and lock contention |
+| **Description** | Foreign key columns without indexes - slow cascades and lock contention |
 
 **Remediation:** Create an index on the referencing column(s):
 ```sql
@@ -451,7 +452,7 @@ ALTER SYSTEM SET wal_level = 'logical';
 | **File** | `internal/checks/replication/database_encoding.go` |
 | **Mode** | scan |
 | **Severity** | CONSIDER (non-UTF8) / INFO (UTF-8) |
-| **Description** | Database encoding — all Spock nodes must use the same encoding |
+| **Description** | Database encoding - all Spock nodes must use the same encoding |
 
 **Remediation:** Ensure all nodes use the same encoding. Prefer UTF-8.
 
@@ -464,7 +465,7 @@ ALTER SYSTEM SET wal_level = 'logical';
 | **File** | `internal/checks/replication/multiple_databases.go` |
 | **Mode** | scan |
 | **Severity** | WARNING |
-| **Description** | More than one user database — Spock supports one DB per instance |
+| **Description** | More than one user database - Spock supports one DB per instance |
 
 **Remediation:** Separate databases into individual PostgreSQL instances.
 
@@ -551,7 +552,7 @@ underlying issue and manually fix affected rows.
 | **File** | `internal/checks/replication/stale_replication_slots.go` |
 | **Mode** | audit |
 | **Severity** | CRITICAL (>1 GB retained) / WARNING (>100 MB) / INFO (healthy) |
-| **Description** | Inactive replication slots retaining WAL — can cause disk exhaustion |
+| **Description** | Inactive replication slots retaining WAL - can cause disk exhaustion |
 
 **Remediation:** Investigate why the slot is inactive. If the subscriber is
 permanently gone, drop the slot:
@@ -641,7 +642,7 @@ ALTER SYSTEM SET track_commit_timestamp = on;
 | **File** | `internal/checks/config/timezone_config.go` |
 | **Mode** | scan |
 | **Severity** | WARNING (non-UTC) / CONSIDER (log_timezone) / INFO (UTC) |
-| **Description** | Timezone settings — UTC recommended for consistent commit timestamps |
+| **Description** | Timezone settings - UTC recommended for consistent commit timestamps |
 
 **Remediation:**
 ```sql
@@ -658,7 +659,7 @@ SELECT pg_reload_conf();
 | **File** | `internal/checks/config/idle_tx_timeout.go` |
 | **Mode** | scan |
 | **Severity** | CONSIDER |
-| **Description** | Idle-in-transaction timeout — long-idle transactions block VACUUM and cause bloat |
+| **Description** | Idle-in-transaction timeout - long-idle transactions block VACUUM and cause bloat |
 
 **Remediation:**
 ```sql
@@ -675,7 +676,7 @@ SELECT pg_reload_conf();
 | **File** | `internal/checks/config/pg_minor_version.go` |
 | **Mode** | audit |
 | **Severity** | INFO |
-| **Description** | PostgreSQL minor version — all nodes should run the same minor version |
+| **Description** | PostgreSQL minor version - all nodes should run the same minor version |
 
 **Remediation:** Plan a coordinated minor version upgrade across all nodes.
 
@@ -812,7 +813,7 @@ ALTER SYSTEM SET spock.enable_ddl_replication = on;
 | **File** | `internal/checks/sql_patterns/advisory_locks.go` |
 | **Mode** | scan |
 | **Severity** | CONSIDER |
-| **Description** | Advisory lock usage — locks are node-local |
+| **Description** | Advisory lock usage - locks are node-local |
 
 **Remediation:** Implement a distributed locking mechanism if locks are used
 for application-level coordination.
@@ -826,7 +827,7 @@ for application-level coordination.
 | **File** | `internal/checks/sql_patterns/concurrent_indexes.go` |
 | **Mode** | scan |
 | **Severity** | WARNING |
-| **Description** | CREATE INDEX CONCURRENTLY — must be created manually on each node |
+| **Description** | CREATE INDEX CONCURRENTLY - must be created manually on each node |
 
 **Remediation:** Execute `CREATE INDEX CONCURRENTLY` manually on each node.
 
@@ -839,7 +840,7 @@ for application-level coordination.
 | **File** | `internal/checks/sql_patterns/temp_table_queries.go` |
 | **Mode** | scan |
 | **Severity** | INFO |
-| **Description** | CREATE TEMP TABLE in SQL — session-local, not replicated |
+| **Description** | CREATE TEMP TABLE in SQL - session-local, not replicated |
 
 **Remediation:** No action needed unless temp tables are expected to persist
 across nodes.
@@ -868,7 +869,7 @@ across nodes.
 | **File** | `internal/checks/functions/trigger_functions.go` |
 | **Mode** | scan |
 | **Severity** | WARNING (ALWAYS/REPLICA) / INFO (ORIGIN/DISABLED) |
-| **Description** | Trigger enabled modes — ENABLE REPLICA and ENABLE ALWAYS fire during Spock apply |
+| **Description** | Trigger enabled modes - ENABLE REPLICA and ENABLE ALWAYS fire during Spock apply |
 
 **Remediation:** Use ORIGIN mode for most triggers. Only use REPLICA or ALWAYS
 when the trigger must fire during replication apply.
@@ -882,7 +883,7 @@ when the trigger must fire during replication apply.
 | **File** | `internal/checks/functions/views_audit.go` |
 | **Mode** | scan |
 | **Severity** | WARNING (materialized views) / CONSIDER (regular views) |
-| **Description** | Views and materialized views — refresh coordination |
+| **Description** | Views and materialized views - refresh coordination |
 
 **Remediation:** Coordinate `REFRESH MATERIALIZED VIEW` across nodes.
 
@@ -910,7 +911,7 @@ when the trigger must fire during replication apply.
 | **File** | `internal/checks/sequences/sequence_data_types.go` |
 | **Mode** | scan |
 | **Severity** | WARNING |
-| **Description** | Sequence data types — smallint/integer may overflow faster in multi-master |
+| **Description** | Sequence data types - smallint/integer may overflow faster in multi-master |
 
 **Remediation:** Alter columns and sequences to use `bigint` for
 Snowflake-compatible globally unique IDs.

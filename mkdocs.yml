@@ -70,3 +70,5 @@ nav:
       - All Checks: checks-reference.md
   - Architecture:
       - System Architecture: architecture.md
+  - Release Notes: changelog.md
+  - License: LICENSE.md

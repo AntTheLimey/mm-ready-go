@@ -8,6 +8,17 @@ Point it at any PostgreSQL database and get a detailed report
 of schema, configuration, extension, and SQL pattern issues
 that need to be addressed before (or after) deploying Spock.
 
+## Table of Contents
+
+- [Quickstart Guide](docs/quickstart.md)
+- [Tutorial](docs/tutorial.md)
+- [Checks Reference](docs/checks-reference.md)
+- [Architecture](docs/architecture.md)
+- [Release Notes](docs/changelog.md)
+- [License](docs/LICENSE.md)
+
+## Features
+
 mm-ready-go includes the following features:
 
 - 57 automated checks across 7 categories - schema,
@@ -27,14 +38,14 @@ mm-ready-go includes the following features:
   so previous scans are never overwritten
 - Configuration file support - YAML-based check filtering
   and report options
-- Single static binary - no runtime dependencies, cross-compiled
-  for Linux, macOS, and Windows
+- Single static binary - no runtime dependencies,
+  cross-compiled for Linux, macOS, and Windows
 - Source-code-verified - check logic is verified against the
   Spock C source code, not just documentation
 
 ## Installation
 
-mm-ready-go can be installed directly from GitHub or built
+You can install mm-ready-go directly from GitHub or build it
 from source.
 
 ### From GitHub
@@ -50,24 +61,28 @@ go install github.com/pgEdge/mm-ready-go@latest
 Clone the repository and build:
 
 ```bash
-git clone https://github.com/pgEdge/mm-ready-go.git && cd mm-ready-go
+git clone https://github.com/pgEdge/mm-ready-go.git \
+  && cd mm-ready-go
 make build
 # Binary at ./bin/mm-ready-go
 ```
 
 ### Cross-compile
 
+Build binaries for all supported platforms:
+
 ```bash
 make build-all
-# Binaries at ./bin/mm-ready-go-{linux,darwin,windows}-{amd64,arm64}
+# Binaries at
+# ./bin/mm-ready-go-{linux,darwin,windows}-{amd64,arm64}
 ```
 
-Requires **Go 1.21+**.
+Requires Go 1.21+.
 
 ## Usage
 
-The following sections describe each operational mode and the
-available options.
+The following sections describe each operational mode and
+the available options.
 
 ### Scan (pre-Spock readiness)
 
@@ -81,7 +96,8 @@ mm-ready-go scan \
   --format html --output report.html
 
 # Using a DSN
-mm-ready-go scan --dsn "postgresql://postgres:secret@db.example.com/myapp" \
+mm-ready-go scan \
+  --dsn "postgresql://postgres:secret@db.example.com/myapp" \
   --format json --output report.json
 
 # With SSL
@@ -89,7 +105,8 @@ mm-ready-go scan \
   --host db.example.com --dbname myapp --user postgres \
   --sslmode verify-full --sslrootcert /path/to/ca.crt
 
-# Minimal - defaults to scan, HTML format, writes to ./reports/
+# Minimal - defaults to scan, HTML format,
+# writes to ./reports/
 mm-ready-go --host localhost --dbname myapp --user postgres
 ```
 
@@ -124,7 +141,8 @@ has Spock installed:
 
 ```bash
 mm-ready-go audit \
-  --host db.example.com --dbname myapp --user postgres --password secret \
+  --host db.example.com --dbname myapp \
+  --user postgres --password secret \
   --format html --output audit.html
 ```
 
@@ -135,25 +153,28 @@ database connection:
 
 ```bash
 # Analyze a pg_dump --schema-only SQL file
-mm-ready-go analyze --file customer_schema.sql --format html --output report.html
+mm-ready-go analyze \
+  --file customer_schema.sql \
+  --format html --output report.html
 
 # With verbose output
 mm-ready-go analyze --file schema.sql -v
 ```
 
-The `analyze` mode runs 19 of the 57 checks - those that can
-work from schema structure alone. Checks requiring live
+The `analyze` mode runs 19 of the 57 checks - those that
+can work from schema structure alone. Checks requiring live
 database access (GUCs, pg_stat_statements, Spock catalogs,
 etc.) are marked as skipped.
 
 ### Monitor (observe activity over time)
 
-Run the monitor to observe SQL activity over a specified time
-window:
+Run the monitor to observe SQL activity over a specified
+time window:
 
 ```bash
 mm-ready-go monitor \
-  --host db.example.com --dbname myapp --user postgres --password secret \
+  --host db.example.com --dbname myapp \
+  --user postgres --password secret \
   --duration 3600 --format html --output monitor.html
 ```
 
@@ -174,16 +195,20 @@ file:
 
 ```bash
 # Exclude specific checks
-mm-ready-go scan --host localhost --dbname myapp --exclude sequence_audit,sequence_data_types
+mm-ready-go scan --host localhost --dbname myapp \
+  --exclude sequence_audit,sequence_data_types
 
 # Run only specific checks (whitelist mode)
-mm-ready-go scan --host localhost --dbname myapp --include-only primary_keys,foreign_keys,wal_level
+mm-ready-go scan --host localhost --dbname myapp \
+  --include-only primary_keys,foreign_keys,wal_level
 
 # Use a specific config file
-mm-ready-go scan --host localhost --dbname myapp --config ./customer-config.yaml
+mm-ready-go scan --host localhost --dbname myapp \
+  --config ./customer-config.yaml
 
 # Skip config file entirely
-mm-ready-go scan --host localhost --dbname myapp --no-config
+mm-ready-go scan --host localhost --dbname myapp \
+  --no-config
 ```
 
 ### Report options
@@ -192,16 +217,19 @@ Control the content included in reports:
 
 ```bash
 # Omit the To Do list from the report
-mm-ready-go scan --host localhost --dbname myapp --no-todo
+mm-ready-go scan --host localhost --dbname myapp \
+  --no-todo
 
-# Include CONSIDER severity items in the To Do list (excluded by default)
-mm-ready-go scan --host localhost --dbname myapp --todo-include-consider
+# Include CONSIDER severity items in the To Do list
+# (excluded by default)
+mm-ready-go scan --host localhost --dbname myapp \
+  --todo-include-consider
 ```
 
 ## Configuration File
 
-Create a `mm-ready.yaml` file to persistently configure check
-filtering and report options. The tool searches for
+Create a `mm-ready.yaml` file to persistently configure
+check filtering and report options. The tool searches for
 configuration in the following order:
 
 - `--config /path/to/file.yaml` (explicit path)
@@ -235,7 +263,8 @@ audit:
     exclude:
       - conflict_log  # Too noisy in dev environment
 
-# Alternative: whitelist mode (mutually exclusive with exclude)
+# Alternative: whitelist mode (mutually exclusive with
+# exclude)
 # checks:
 #   include_only:
 #     - primary_keys
@@ -244,8 +273,8 @@ audit:
 
 # Report settings
 report:
-  todo_list: true              # Show To Do list (default: true)
-  todo_include_consider: false # Include CONSIDER in To Do (default: false)
+  todo_list: true              # Show To Do list
+  todo_include_consider: false # Include CONSIDER in To Do
 ```
 
 ## Output
@@ -258,8 +287,8 @@ report.html  -->  report_20260127_131504.html
 ```
 
 This means you can re-run scans without losing previous
-results. You can also pass a directory path and the tool will
-generate a filename automatically:
+results. You can also pass a directory path and the tool
+generates a filename automatically:
 
 ```bash
 mm-ready-go scan ... --output ./reports/
@@ -279,21 +308,23 @@ The following table describes the severity levels:
 
 ### Readiness Verdict
 
-The report includes an overall verdict based on the findings.
+The report includes an overall verdict based on the
+findings. The three possible verdicts are:
 
-- READY means no critical or warning issues were found.
-- CONDITIONALLY READY means no critical issues exist, but
+- `READY` means no critical or warning issues were found.
+- `CONDITIONALLY READY` means no critical issues exist, but
   warnings should be reviewed.
-- NOT READY means critical issues must be resolved first.
+- `NOT READY` means critical issues must be resolved first.
 
 ## Check Categories
 
-The checks are organized into seven categories, each covering
-a different aspect of Spock compatibility.
+The checks are organized into seven categories, each
+covering a different aspect of Spock compatibility.
 
 ### Schema (22 checks)
 
-These checks analyze table structure for Spock compatibility.
+These checks analyze table structure for Spock
+compatibility.
 
 The following table lists all schema checks:
 
@@ -419,47 +450,63 @@ The following directory tree shows the project layout:
 
 ```text
 MM_Ready_Go/
-  main.go                          # Entry point
+  main.go                        # Entry point
   internal/
-    models/models.go               # Severity, Finding, CheckResult, ScanReport
-    check/check.go                 # Check interface + Register() + global registry
-    check/registry.go              # GetChecks() with mode/category filtering
-    config/config.go               # YAML config loader
-    checks/register.go             # Blank imports triggering init() registrations
-    checks/schema/                 # 22 schema checks
-    checks/replication/            # 12 replication checks (scan + audit)
-    checks/config/                 # 8 configuration checks
-    checks/extensions/             # 5 extension checks
-    checks/sql_patterns/           # 5 SQL pattern checks
-    checks/functions/              # 3 function/trigger checks
-    checks/sequences/              # 2 sequence checks
+    models/models.go             # Severity, Finding,
+                                 # CheckResult, ScanReport
+    check/check.go               # Check interface +
+                                 # Register() + global
+                                 # registry
+    check/registry.go            # GetChecks() with
+                                 # mode/category filtering
+    config/config.go             # YAML config loader
+    checks/register.go           # Blank imports triggering
+                                 # init() registrations
+    checks/schema/               # 22 schema checks
+    checks/replication/          # 12 replication checks
+                                 # (scan + audit)
+    checks/config/               # 8 configuration checks
+    checks/extensions/           # 5 extension checks
+    checks/sql_patterns/         # 5 SQL pattern checks
+    checks/functions/            # 3 function/trigger checks
+    checks/sequences/            # 2 sequence checks
     parser/
-      types.go                     # ParsedSchema, TableDef, ColumnDef, etc.
-      parser.go                    # ParseDump() - pg_dump SQL parser
+      types.go                   # ParsedSchema, TableDef,
+                                 # ColumnDef, etc.
+      parser.go                  # ParseDump() - pg_dump
+                                 # SQL parser
     analyzer/
-      analyzer.go                  # RunAnalyze() orchestrator
-      checks.go                    # 19 static check functions for offline analysis
-    connection/connection.go       # pgx connection, GetPGVersion()
-    scanner/scanner.go             # RunScan() orchestrator
+      analyzer.go                # RunAnalyze() orchestrator
+      checks.go                  # 19 static check functions
+                                 # for offline analysis
+    connection/connection.go     # pgx connection,
+                                 # GetPGVersion()
+    scanner/scanner.go           # RunScan() orchestrator
     reporter/
-      json.go                      # JSON output
-      markdown.go                  # Markdown output
-      html.go                      # Standalone HTML report
+      json.go                    # JSON output
+      markdown.go                # Markdown output
+      html.go                    # Standalone HTML report
     monitor/
-      observer.go                  # Monitor mode orchestrator
-      pgstat_collector.go          # pg_stat_statements snapshots
-      log_parser.go                # PostgreSQL log file parser
+      observer.go                # Monitor mode orchestrator
+      pgstat_collector.go        # pg_stat_statements
+                                 # snapshots
+      log_parser.go              # PostgreSQL log file
+                                 # parser
     cmd/
-      root.go                      # Cobra root command
-      scan.go                      # scan subcommand (default)
-      audit.go                     # audit subcommand
-      analyze.go                   # analyze subcommand (offline schema analysis)
-      monitor.go                   # monitor subcommand
-      listchecks.go                # list-checks subcommand
-      output.go                    # Timestamped output path generation
+      root.go                    # Cobra root command
+      scan.go                    # scan subcommand (default)
+      audit.go                   # audit subcommand
+      analyze.go                 # analyze subcommand
+                                 # (offline schema analysis)
+      monitor.go                 # monitor subcommand
+      listchecks.go              # list-checks subcommand
+      output.go                  # Timestamped output path
+                                 # generation
 ```
 
 ## Building from Source
+
+Use the following make targets to build and test:
 
 ```bash
 make build          # Build for current platform
@@ -470,27 +517,38 @@ make build-all      # Cross-compile for all platforms
 make clean          # Remove binaries
 ```
 
-## Contributing
-
-Bug reports and pull requests are welcome on
-[GitHub](https://github.com/pgEdge/mm-ready-go/issues).
-
-To set up a development environment:
-
-```bash
-git clone https://github.com/pgEdge/mm-ready-go.git && cd mm-ready-go
-make build
-go test ./internal/...
-```
-
 ## Requirements
 
-- Go 1.21+ (build only - the compiled binary has no runtime dependencies)
+The project has the following requirements:
+
+- Go 1.21+ (build only - the compiled binary has no runtime
+  dependencies)
 - Target database: PostgreSQL 15, 16, 17, or 18
-- Read-only access to `pg_catalog`, `pg_stat_statements` (optional), and
+- Read-only access to `pg_catalog`,
+  `pg_stat_statements` (optional), and
   `pg_hba_file_rules` (optional)
+
+## Documentation
+
+For more information, visit
+[docs.pgedge.com](https://docs.pgedge.com).
+
+## Support & Resources
+
+Use the following resources for help and issue reporting:
+
+- For more information, visit
+  [docs.pgedge.com](https://docs.pgedge.com).
+- To report an issue with the software, visit
+  [github.com/pgEdge/mm-ready-go/issues](https://github.com/pgEdge/mm-ready-go/issues).
+
+## Contributing
+
+We welcome contributions; for more information, see
+the project's
+[issues page](https://github.com/pgEdge/mm-ready-go/issues).
 
 ## License
 
-Copyright pgEdge, Inc. Licensed under the
+This project is licensed under the
 [PostgreSQL License](LICENSE.md).
