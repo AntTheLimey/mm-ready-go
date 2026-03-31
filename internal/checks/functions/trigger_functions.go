@@ -17,9 +17,13 @@ func init() {
 	check.Register(TriggerFunctionsCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (TriggerFunctionsCheck) Name() string     { return "trigger_functions" }
+// Category returns the check category.
 func (TriggerFunctionsCheck) Category() string { return "functions" }
+// Mode returns when this check runs (scan, audit, or both).
 func (TriggerFunctionsCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (TriggerFunctionsCheck) Description() string {
 	return "Triggers — ENABLE REPLICA and ENABLE ALWAYS both fire during Spock apply"
 }
@@ -31,6 +35,7 @@ var enabledLabels = map[string]string{
 	"A": "ALWAYS (fires in all sessions)",
 }
 
+// Run executes the check against the database connection.
 func (c TriggerFunctionsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const query = `
 		SELECT

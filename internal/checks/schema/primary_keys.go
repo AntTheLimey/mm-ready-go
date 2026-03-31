@@ -17,13 +17,18 @@ func init() {
 	check.Register(PrimaryKeysCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (PrimaryKeysCheck) Name() string     { return "primary_keys" }
+// Category returns the check category.
 func (PrimaryKeysCheck) Category() string { return "schema" }
+// Mode returns when this check runs (scan, audit, or both).
 func (PrimaryKeysCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (PrimaryKeysCheck) Description() string {
 	return "Tables without primary keys — affects Spock replication behaviour"
 }
 
+// Run executes the check against the database connection.
 func (c PrimaryKeysCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

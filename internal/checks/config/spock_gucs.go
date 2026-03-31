@@ -17,9 +17,13 @@ func init() {
 	check.Register(SpockGucsCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (SpockGucsCheck) Name() string        { return "spock_gucs" }
+// Category returns the check category.
 func (SpockGucsCheck) Category() string    { return "config" }
+// Description returns a human-readable summary of this check.
 func (SpockGucsCheck) Description() string { return "Verify key Spock configuration parameters (GUCs)" }
+// Mode returns when this check runs (scan, audit, or both).
 func (SpockGucsCheck) Mode() string        { return "audit" }
 
 type gucSpec struct {
@@ -73,6 +77,7 @@ var spockGUCs = []gucSpec{
 	},
 }
 
+// Run executes the check against the database connection.
 func (c SpockGucsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var findings []models.Finding
 

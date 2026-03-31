@@ -19,13 +19,18 @@ func init() {
 	check.Register(ParallelApplyCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (ParallelApplyCheck) Name() string     { return "parallel_apply" }
+// Category returns the check category.
 func (ParallelApplyCheck) Category() string { return "config" }
+// Description returns a human-readable summary of this check.
 func (ParallelApplyCheck) Description() string {
 	return "Parallel apply workers configuration for Spock performance"
 }
+// Mode returns when this check runs (scan, audit, or both).
 func (ParallelApplyCheck) Mode() string { return "scan" }
 
+// Run executes the check against the database connection.
 func (c ParallelApplyCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	paramNames := []string{
 		"max_worker_processes",

@@ -17,13 +17,18 @@ func init() {
 	check.Register(ExtensionVersionsCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (ExtensionVersionsCheck) Name() string     { return "extension_versions" }
+// Category returns the check category.
 func (ExtensionVersionsCheck) Category() string { return "extensions" }
+// Mode returns when this check runs (scan, audit, or both).
 func (ExtensionVersionsCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (ExtensionVersionsCheck) Description() string {
 	return "Check installed extension versions against available upgrades"
 }
 
+// Run executes the check against the database connection.
 func (c ExtensionVersionsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const query = `
 		SELECT

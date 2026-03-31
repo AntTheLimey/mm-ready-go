@@ -18,9 +18,13 @@ func init() {
 	check.Register(NumericColumnsCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (NumericColumnsCheck) Name() string     { return "numeric_columns" }
+// Category returns the check category.
 func (NumericColumnsCheck) Category() string { return "schema" }
+// Mode returns when this check runs (scan, audit, or both).
 func (NumericColumnsCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (NumericColumnsCheck) Description() string {
 	return "Numeric columns that may be Delta-Apply candidates (counters, balances, etc.)"
 }
@@ -32,6 +36,7 @@ var suspectPatterns = []string{
 	"cumulative", "aggregate", "accrued", "inventory",
 }
 
+// Run executes the check against the database connection.
 func (c NumericColumnsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

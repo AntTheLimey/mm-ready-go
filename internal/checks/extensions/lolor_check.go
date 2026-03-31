@@ -17,13 +17,18 @@ func init() {
 	check.Register(LolorCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (LolorCheck) Name() string     { return "lolor_check" }
+// Category returns the check category.
 func (LolorCheck) Category() string { return "extensions" }
+// Mode returns when this check runs (scan, audit, or both).
 func (LolorCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (LolorCheck) Description() string {
 	return "LOLOR extension — required for replicating large objects"
 }
 
+// Run executes the check against the database connection.
 func (c LolorCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var lobCount int
 	err := conn.QueryRow(ctx, "SELECT count(*) FROM pg_catalog.pg_largeobject_metadata;").Scan(&lobCount)

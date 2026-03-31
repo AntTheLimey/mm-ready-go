@@ -16,13 +16,18 @@ func init() {
 	check.Register(&SubscriptionHealthCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (c *SubscriptionHealthCheck) Name() string     { return "subscription_health" }
+// Category returns the check category.
 func (c *SubscriptionHealthCheck) Category() string { return "replication" }
+// Description returns a human-readable summary of this check.
 func (c *SubscriptionHealthCheck) Description() string {
 	return "Check health of Spock subscriptions"
 }
+// Mode returns when this check runs (scan, audit, or both).
 func (c *SubscriptionHealthCheck) Mode() string { return "audit" }
 
+// Run executes the check against the database connection.
 func (c *SubscriptionHealthCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	// Check if spock schema exists
 	var hasSpock bool

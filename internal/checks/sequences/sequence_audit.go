@@ -1,4 +1,5 @@
-// Audit all sequences for multi-master migration planning.
+// Package sequences contains checks that audit sequence objects for multi-master
+// replication compatibility with Spock 5.
 package sequences
 
 import (
@@ -17,13 +18,18 @@ func init() {
 	check.Register(SequenceAuditCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (SequenceAuditCheck) Name() string     { return "sequence_audit" }
+// Category returns the check category.
 func (SequenceAuditCheck) Category() string { return "sequences" }
+// Mode returns when this check runs (scan, audit, or both).
 func (SequenceAuditCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (SequenceAuditCheck) Description() string {
 	return "All sequences, types, and ownership — need snowflake migration plan"
 }
 
+// Run executes the check against the database connection.
 func (c SequenceAuditCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const query = `
 		SELECT

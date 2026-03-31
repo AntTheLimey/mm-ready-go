@@ -17,13 +17,18 @@ func init() {
 	check.Register(UnloggedTablesCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (UnloggedTablesCheck) Name() string     { return "unlogged_tables" }
+// Category returns the check category.
 func (UnloggedTablesCheck) Category() string { return "schema" }
+// Mode returns when this check runs (scan, audit, or both).
 func (UnloggedTablesCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (UnloggedTablesCheck) Description() string {
 	return "UNLOGGED tables — not written to WAL and cannot be replicated"
 }
 
+// Run executes the check against the database connection.
 func (c UnloggedTablesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

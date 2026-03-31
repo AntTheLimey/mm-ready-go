@@ -17,13 +17,18 @@ func init() {
 	check.Register(GeneratedColumnsCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (GeneratedColumnsCheck) Name() string     { return "generated_columns" }
+// Category returns the check category.
 func (GeneratedColumnsCheck) Category() string { return "schema" }
+// Mode returns when this check runs (scan, audit, or both).
 func (GeneratedColumnsCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (GeneratedColumnsCheck) Description() string {
 	return "Generated/stored columns — replication behavior differences"
 }
 
+// Run executes the check against the database connection.
 func (c GeneratedColumnsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

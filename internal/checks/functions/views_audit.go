@@ -18,13 +18,18 @@ func init() {
 	check.Register(ViewsAuditCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (ViewsAuditCheck) Name() string     { return "views_audit" }
+// Category returns the check category.
 func (ViewsAuditCheck) Category() string { return "functions" }
+// Mode returns when this check runs (scan, audit, or both).
 func (ViewsAuditCheck) Mode() string     { return "both" }
+// Description returns a human-readable summary of this check.
 func (ViewsAuditCheck) Description() string {
 	return "Audit views — updatable views and materialized views have replication considerations"
 }
 
+// Run executes the check against the database connection.
 func (c ViewsAuditCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	// Check for materialized views.
 	const matviewQuery = `

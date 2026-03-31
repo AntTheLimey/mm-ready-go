@@ -16,13 +16,18 @@ func init() {
 	check.Register(&DatabaseEncodingCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (c *DatabaseEncodingCheck) Name() string     { return "database_encoding" }
+// Category returns the check category.
 func (c *DatabaseEncodingCheck) Category() string { return "replication" }
+// Description returns a human-readable summary of this check.
 func (c *DatabaseEncodingCheck) Description() string {
 	return "Database encoding — all Spock nodes must use the same encoding"
 }
+// Mode returns when this check runs (scan, audit, or both).
 func (c *DatabaseEncodingCheck) Mode() string { return "scan" }
 
+// Run executes the check against the database connection.
 func (c *DatabaseEncodingCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	query := `
 		SELECT

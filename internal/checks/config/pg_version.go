@@ -1,4 +1,5 @@
-// Check PostgreSQL version compatibility with Spock 5.
+// Package config contains checks for PostgreSQL server configuration settings
+// relevant to Spock 5 multi-master replication.
 package config
 
 import (
@@ -28,11 +29,16 @@ var supportedMajors = map[int]bool{
 	18: true,
 }
 
+// Name returns the unique identifier for this check.
 func (PgVersionCheck) Name() string        { return "pg_version" }
+// Category returns the check category.
 func (PgVersionCheck) Category() string    { return "config" }
+// Description returns a human-readable summary of this check.
 func (PgVersionCheck) Description() string { return "PostgreSQL version compatibility with Spock 5" }
+// Mode returns when this check runs (scan, audit, or both).
 func (PgVersionCheck) Mode() string        { return "scan" }
 
+// Run executes the check against the database connection.
 func (c PgVersionCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var versionStr string
 	var versionNum int

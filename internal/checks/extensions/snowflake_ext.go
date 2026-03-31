@@ -17,13 +17,18 @@ func init() {
 	check.Register(SnowflakeExtCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (SnowflakeExtCheck) Name() string     { return "snowflake_ext" }
+// Category returns the check category.
 func (SnowflakeExtCheck) Category() string { return "extensions" }
+// Mode returns when this check runs (scan, audit, or both).
 func (SnowflakeExtCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (SnowflakeExtCheck) Description() string {
 	return "pgEdge Snowflake extension availability for globally unique ID generation"
 }
 
+// Run executes the check against the database connection.
 func (c SnowflakeExtCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	// Check if snowflake is installed.
 	var extversion *string

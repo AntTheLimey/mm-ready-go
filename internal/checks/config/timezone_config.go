@@ -17,13 +17,18 @@ func init() {
 	check.Register(TimezoneConfigCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (TimezoneConfigCheck) Name() string     { return "timezone_config" }
+// Category returns the check category.
 func (TimezoneConfigCheck) Category() string { return "config" }
+// Description returns a human-readable summary of this check.
 func (TimezoneConfigCheck) Description() string {
 	return "Timezone settings — UTC recommended for consistent commit timestamps"
 }
+// Mode returns when this check runs (scan, audit, or both).
 func (TimezoneConfigCheck) Mode() string { return "scan" }
 
+// Run executes the check against the database connection.
 func (c TimezoneConfigCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var tz string
 	err := conn.QueryRow(ctx, "SHOW timezone;").Scan(&tz)

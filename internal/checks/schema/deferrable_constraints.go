@@ -17,13 +17,18 @@ func init() {
 	check.Register(DeferrableConstraintsCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (DeferrableConstraintsCheck) Name() string     { return "deferrable_constraints" }
+// Category returns the check category.
 func (DeferrableConstraintsCheck) Category() string { return "schema" }
+// Mode returns when this check runs (scan, audit, or both).
 func (DeferrableConstraintsCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (DeferrableConstraintsCheck) Description() string {
 	return "Deferrable unique/PK constraints — silently skipped by Spock conflict resolution"
 }
 
+// Run executes the check against the database connection.
 func (c DeferrableConstraintsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

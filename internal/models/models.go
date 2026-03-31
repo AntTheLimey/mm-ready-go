@@ -12,9 +12,13 @@ import (
 type Severity int
 
 const (
+	// SeverityCritical indicates an issue that must be fixed before Spock installation.
 	SeverityCritical Severity = iota
+	// SeverityWarning indicates an issue that should be fixed or reviewed.
 	SeverityWarning
+	// SeverityConsider indicates an issue that may need action depending on context.
 	SeverityConsider
+	// SeverityInfo indicates a purely informational finding requiring no action.
 	SeverityInfo
 )
 
@@ -32,6 +36,7 @@ var severityFromName = map[string]Severity{
 	"INFO":     SeverityInfo,
 }
 
+// String returns the human-readable name of the severity level.
 func (s Severity) String() string {
 	if name, ok := severityNames[s]; ok {
 		return name
@@ -39,10 +44,12 @@ func (s Severity) String() string {
 	return fmt.Sprintf("Severity(%d)", int(s))
 }
 
+// MarshalJSON encodes the severity as its string name for JSON output.
 func (s Severity) MarshalJSON() ([]byte, error) {
 	return json.Marshal(s.String())
 }
 
+// UnmarshalJSON decodes a severity string name from JSON input.
 func (s *Severity) UnmarshalJSON(data []byte) error {
 	var name string
 	if err := json.Unmarshal(data, &name); err != nil {

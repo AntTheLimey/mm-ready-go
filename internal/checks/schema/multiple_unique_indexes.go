@@ -18,13 +18,18 @@ func init() {
 	check.Register(MultipleUniqueIndexesCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (MultipleUniqueIndexesCheck) Name() string     { return "multiple_unique_indexes" }
+// Category returns the check category.
 func (MultipleUniqueIndexesCheck) Category() string { return "schema" }
+// Mode returns when this check runs (scan, audit, or both).
 func (MultipleUniqueIndexesCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (MultipleUniqueIndexesCheck) Description() string {
 	return "Tables with multiple unique indexes — affects Spock conflict resolution"
 }
 
+// Run executes the check against the database connection.
 func (c MultipleUniqueIndexesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

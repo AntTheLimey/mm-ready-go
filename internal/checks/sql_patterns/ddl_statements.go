@@ -18,9 +18,13 @@ func init() {
 	check.Register(DdlStatementsCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (DdlStatementsCheck) Name() string     { return "ddl_statements" }
+// Category returns the check category.
 func (DdlStatementsCheck) Category() string { return "sql_patterns" }
+// Mode returns when this check runs (scan, audit, or both).
 func (DdlStatementsCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (DdlStatementsCheck) Description() string {
 	return "DDL statements — must use Spock DDL replication or manual coordination"
 }
@@ -37,6 +41,7 @@ var ddlPatterns = []string{
 	"CREATE SEQUENCE", "ALTER SEQUENCE", "DROP SEQUENCE",
 }
 
+// Run executes the check against the database connection.
 func (c DdlStatementsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	pattern := strings.Join(ddlPatterns, "|")
 

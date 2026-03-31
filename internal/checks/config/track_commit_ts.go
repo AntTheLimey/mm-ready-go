@@ -17,13 +17,18 @@ func init() {
 	check.Register(TrackCommitTimestampCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (TrackCommitTimestampCheck) Name() string     { return "track_commit_timestamp" }
+// Category returns the check category.
 func (TrackCommitTimestampCheck) Category() string { return "config" }
+// Description returns a human-readable summary of this check.
 func (TrackCommitTimestampCheck) Description() string {
 	return "track_commit_timestamp must be on for Spock conflict resolution"
 }
+// Mode returns when this check runs (scan, audit, or both).
 func (TrackCommitTimestampCheck) Mode() string { return "scan" }
 
+// Run executes the check against the database connection.
 func (c TrackCommitTimestampCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var val string
 	err := conn.QueryRow(ctx, "SHOW track_commit_timestamp;").Scan(&val)

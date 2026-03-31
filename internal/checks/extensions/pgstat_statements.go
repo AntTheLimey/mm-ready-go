@@ -17,13 +17,18 @@ func init() {
 	check.Register(PgStatStatementsCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (PgStatStatementsCheck) Name() string     { return "pg_stat_statements_check" }
+// Category returns the check category.
 func (PgStatStatementsCheck) Category() string { return "extensions" }
+// Mode returns when this check runs (scan, audit, or both).
 func (PgStatStatementsCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (PgStatStatementsCheck) Description() string {
 	return "pg_stat_statements availability for SQL pattern observation"
 }
 
+// Run executes the check against the database connection.
 func (c PgStatStatementsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var extversion *string
 	err := conn.QueryRow(ctx,

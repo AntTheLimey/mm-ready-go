@@ -17,13 +17,18 @@ func init() {
 	check.Register(SequenceDataTypesCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (SequenceDataTypesCheck) Name() string     { return "sequence_data_types" }
+// Category returns the check category.
 func (SequenceDataTypesCheck) Category() string { return "sequences" }
+// Mode returns when this check runs (scan, audit, or both).
 func (SequenceDataTypesCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (SequenceDataTypesCheck) Description() string {
 	return "Sequence data types — smallint/integer may overflow faster in multi-master"
 }
 
+// Run executes the check against the database connection.
 func (c SequenceDataTypesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const query = `
 		SELECT

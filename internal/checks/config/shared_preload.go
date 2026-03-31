@@ -18,13 +18,18 @@ func init() {
 	check.Register(SharedPreloadCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (SharedPreloadCheck) Name() string     { return "shared_preload_libraries" }
+// Category returns the check category.
 func (SharedPreloadCheck) Category() string { return "config" }
+// Description returns a human-readable summary of this check.
 func (SharedPreloadCheck) Description() string {
 	return "shared_preload_libraries must include 'spock' for Spock operation"
 }
+// Mode returns when this check runs (scan, audit, or both).
 func (SharedPreloadCheck) Mode() string { return "audit" }
 
+// Run executes the check against the database connection.
 func (c SharedPreloadCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var libs string
 	err := conn.QueryRow(ctx, "SHOW shared_preload_libraries;").Scan(&libs)

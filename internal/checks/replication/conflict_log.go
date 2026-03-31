@@ -16,13 +16,18 @@ func init() {
 	check.Register(&ConflictLogCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (c *ConflictLogCheck) Name() string     { return "conflict_log" }
+// Category returns the check category.
 func (c *ConflictLogCheck) Category() string { return "replication" }
+// Description returns a human-readable summary of this check.
 func (c *ConflictLogCheck) Description() string {
 	return "Review Spock conflict log for recent replication conflicts"
 }
+// Mode returns when this check runs (scan, audit, or both).
 func (c *ConflictLogCheck) Mode() string { return "audit" }
 
+// Run executes the check against the database connection.
 func (c *ConflictLogCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	// Check if spock.conflict_history table exists
 	var hasTable bool

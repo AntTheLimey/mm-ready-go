@@ -1,4 +1,5 @@
-// Check for advisory lock usage — node-local only.
+// Package sql_patterns contains checks that scan pg_stat_statements for SQL
+// patterns relevant to Spock 5 replication (DDL, TRUNCATE CASCADE, etc.).
 package sql_patterns
 
 import (
@@ -17,13 +18,18 @@ func init() {
 	check.Register(AdvisoryLocksCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (AdvisoryLocksCheck) Name() string     { return "advisory_locks" }
+// Category returns the check category.
 func (AdvisoryLocksCheck) Category() string { return "sql_patterns" }
+// Mode returns when this check runs (scan, audit, or both).
 func (AdvisoryLocksCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (AdvisoryLocksCheck) Description() string {
 	return "Advisory lock usage — locks are node-local, not replicated"
 }
 
+// Run executes the check against the database connection.
 func (c AdvisoryLocksCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const query = `
 		SELECT query, calls

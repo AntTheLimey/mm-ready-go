@@ -17,13 +17,18 @@ func init() {
 	check.Register(RulesCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (RulesCheck) Name() string     { return "rules" }
+// Category returns the check category.
 func (RulesCheck) Category() string { return "schema" }
+// Mode returns when this check runs (scan, audit, or both).
 func (RulesCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (RulesCheck) Description() string {
 	return "Rules on tables — can cause unexpected behaviour with logical replication"
 }
 
+// Run executes the check against the database connection.
 func (c RulesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

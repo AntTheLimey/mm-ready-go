@@ -17,13 +17,18 @@ func init() {
 	check.Register(ForeignKeysCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (ForeignKeysCheck) Name() string     { return "foreign_keys" }
+// Category returns the check category.
 func (ForeignKeysCheck) Category() string { return "schema" }
+// Mode returns when this check runs (scan, audit, or both).
 func (ForeignKeysCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (ForeignKeysCheck) Description() string {
 	return "Foreign key relationships — replication ordering and cross-node considerations"
 }
 
+// Run executes the check against the database connection.
 func (c ForeignKeysCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

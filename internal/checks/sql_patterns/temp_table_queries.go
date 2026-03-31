@@ -18,13 +18,18 @@ func init() {
 	check.Register(TempTableQueriesCheck{})
 }
 
+// Name returns the unique identifier for this check.
 func (TempTableQueriesCheck) Name() string     { return "temp_table_queries" }
+// Category returns the check category.
 func (TempTableQueriesCheck) Category() string { return "sql_patterns" }
+// Mode returns when this check runs (scan, audit, or both).
 func (TempTableQueriesCheck) Mode() string     { return "scan" }
+// Description returns a human-readable summary of this check.
 func (TempTableQueriesCheck) Description() string {
 	return "CREATE TEMP TABLE in SQL — session-local, not replicated"
 }
 
+// Run executes the check against the database connection.
 func (c TempTableQueriesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const query = `
 		SELECT query, calls
