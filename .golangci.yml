@@ -20,3 +20,5 @@ linters-settings:
     disabled-checks:
       - dupSubExpr
       - weakCond
+      - ifElseChain
+      - sprintfQuotedString

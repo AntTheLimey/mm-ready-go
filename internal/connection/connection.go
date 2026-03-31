@@ -47,6 +47,7 @@ func Connect(ctx context.Context, cfg Config) (*pgx.Conn, error) {
 			return nil, fmt.Errorf("configure TLS: %w", tlsErr)
 		}
 		connConfig.TLSConfig = tlsConfig
+		connConfig.Fallbacks = nil
 	}
 
 	conn, err := pgx.ConnectConfig(ctx, connConfig)

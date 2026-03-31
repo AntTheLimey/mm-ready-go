@@ -80,9 +80,12 @@ func (c LolorCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, 
 	}
 
 	var nodeVal *string
-	_ = conn.QueryRow(ctx, "SELECT current_setting('lolor.node');").Scan(&nodeVal)
+	err = conn.QueryRow(ctx, "SELECT current_setting('lolor.node', true);").Scan(&nodeVal)
+	if err != nil {
+		return nil, fmt.Errorf("lolor_check: query lolor.node: %w", err)
+	}
 
-	if nodeVal == nil || *nodeVal == "0" {
+	if nodeVal == nil || *nodeVal == "" || *nodeVal == "0" {
 		return []models.Finding{{
 			Severity:  models.SeverityWarning,
 			CheckName: c.Name(),

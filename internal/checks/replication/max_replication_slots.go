@@ -3,6 +3,8 @@ package replication
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
@@ -30,8 +32,10 @@ func (c *MaxReplicationSlotsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]m
 		return nil, fmt.Errorf("querying max_replication_slots: %w", err)
 	}
 
-	var maxSlots int
-	_, _ = fmt.Sscanf(maxSlotsStr, "%d", &maxSlots)
+	maxSlots, err := strconv.Atoi(strings.TrimSpace(maxSlotsStr))
+	if err != nil {
+		return nil, fmt.Errorf("parsing max_replication_slots value %q: %w", maxSlotsStr, err)
+	}
 
 	var usedSlots int
 	err = conn.QueryRow(ctx, "SELECT count(*) FROM pg_catalog.pg_replication_slots;").Scan(&usedSlots)

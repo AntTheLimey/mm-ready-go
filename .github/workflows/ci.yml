@@ -111,7 +111,7 @@ jobs:
               report = json.load(f)
           s = report['summary']
           print(f\"Checks run: {s['total_checks']}\")
-          assert s['total_checks'] > 40, 'Expected 40+ checks to run'
+          assert s['total_checks'] == 49, f\"Expected 49 scan-mode checks, got {s['total_checks']}\"
           print('Scan verification passed!')
           "
 
@@ -128,7 +128,7 @@ jobs:
               report = json.load(f)
           s = report['summary']
           print(f\"Analyze checks: {s['total_checks']}\")
-          assert s['total_checks'] >= 15, 'Expected 15+ analyze checks'
+          assert s['total_checks'] == 19, f\"Expected 19 analyze checks, got {s['total_checks']}\"
           print('Analyze verification passed!')
           "
 

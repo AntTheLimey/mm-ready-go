@@ -248,7 +248,9 @@ func TestJSONErrorReported(t *testing.T) {
 
 func TestJSONMetaFields(t *testing.T) {
 	var data map[string]any
-	json.Unmarshal([]byte(RenderJSON(sampleReport())), &data)
+	if err := json.Unmarshal([]byte(RenderJSON(sampleReport())), &data); err != nil {
+		t.Fatal(err)
+	}
 	meta := data["meta"].(map[string]any)
 	if meta["database"] != "testdb" {
 		t.Errorf("database = %v", meta["database"])
@@ -406,7 +408,9 @@ func TestVerdictInHTMLToo(t *testing.T) {
 func TestVerdictNotInJSON(t *testing.T) {
 	r := makeReportWithSeverities(models.SeverityCritical)
 	var data map[string]any
-	json.Unmarshal([]byte(RenderJSON(r)), &data)
+	if err := json.Unmarshal([]byte(RenderJSON(r)), &data); err != nil {
+		t.Fatal(err)
+	}
 	summary := data["summary"].(map[string]any)
 	if _, ok := summary["verdict"]; ok {
 		t.Error("JSON summary should not contain verdict field")

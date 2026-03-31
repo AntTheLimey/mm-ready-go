@@ -33,7 +33,8 @@ func TestCriticalLessThanInfo(t *testing.T) {
 }
 
 func TestSameSeverityNotLess(t *testing.T) {
-	if SeverityWarning < SeverityWarning {
+	a, b := SeverityWarning, SeverityWarning
+	if a < b {
 		t.Error("WARNING should not be less than WARNING")
 	}
 }

@@ -189,10 +189,10 @@ See [Checks Reference](checks-reference.md) for full details on every check.
 ## 8. Configuration File
 
 mm-ready-go supports an optional YAML configuration file. By default it looks
-for `.mm-ready.yml` in the current directory. Override the path with `--config`:
+for `mm-ready.yaml` in the current directory. Override the path with `--config`:
 
 ```bash
-mm-ready-go scan --config /path/to/.mm-ready.yml ...
+mm-ready-go scan --config /path/to/mm-ready.yaml ...
 ```
 
 Example configuration:

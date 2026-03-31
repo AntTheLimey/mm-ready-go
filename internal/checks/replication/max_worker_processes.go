@@ -3,6 +3,8 @@ package replication
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
@@ -30,8 +32,10 @@ func (c *MaxWorkerProcessesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]mo
 		return nil, fmt.Errorf("querying max_worker_processes: %w", err)
 	}
 
-	var maxWorkers int
-	_, _ = fmt.Sscanf(maxWorkersStr, "%d", &maxWorkers)
+	maxWorkers, err := strconv.Atoi(strings.TrimSpace(maxWorkersStr))
+	if err != nil {
+		return nil, fmt.Errorf("parsing max_worker_processes value %q: %w", maxWorkersStr, err)
+	}
 
 	if maxWorkers < 16 {
 		return []models.Finding{{

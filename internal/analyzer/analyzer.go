@@ -152,7 +152,7 @@ func RunAnalyze(schema *parser.ParsedSchema, filePath string, categories []strin
 		if len(inclSet) > 0 && !inclSet[chk.Name] {
 			continue
 		}
-		if exclSet != nil && exclSet[chk.Name] {
+		if exclSet != nil && exclSet[chk.Name] && !inclSet[chk.Name] {
 			continue
 		}
 		checksToRun = append(checksToRun, chk)
@@ -199,7 +199,7 @@ func RunAnalyze(schema *parser.ParsedSchema, filePath string, categories []strin
 		if len(inclSet) > 0 && !inclSet[skip.Name] {
 			continue
 		}
-		if exclSet != nil && exclSet[skip.Name] {
+		if exclSet != nil && exclSet[skip.Name] && !inclSet[skip.Name] {
 			continue
 		}
 		report.Results = append(report.Results, models.CheckResult{
