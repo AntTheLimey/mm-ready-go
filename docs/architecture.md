@@ -114,7 +114,7 @@ Responsibilities:
 YAML configuration file loading for check filtering and report customization.
 
 `Load(path)`:
-- Reads `.mm-ready.yml` from the specified path or current directory
+- Reads `mm-ready.yaml` from the specified path, current directory, or home directory
 - Returns a `Config` struct with check include/exclude lists and report options
 - Supports global check filtering and mode-specific overrides
 

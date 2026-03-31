@@ -85,7 +85,7 @@ mm-ready-go monitor \
 ## Configuration File
 
 mm-ready-go supports an optional YAML configuration file for check filtering
-and report customization. Place a `.mm-ready.yml` file in the current
+and report customization. Place a `mm-ready.yaml` file in the current
 directory or specify a path with `--config`:
 
 ```yaml
