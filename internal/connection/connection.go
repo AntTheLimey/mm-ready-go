@@ -37,6 +37,11 @@ type Config struct {
 
 // Connect creates a database connection from a Config.
 func Connect(ctx context.Context, cfg Config) (*pgx.Conn, error) {
+	// Validate cert/key pairing early, regardless of sslmode
+	if (cfg.SSLCert != "") != (cfg.SSLKey != "") {
+		return nil, fmt.Errorf("both --sslcert and --sslkey must be provided together")
+	}
+
 	var connStr string
 
 	if cfg.DSN != "" {
@@ -112,6 +117,9 @@ func buildTLSConfig(cfg Config) (*tls.Config, error) {
 	case "verify-ca", "verify-full":
 		tlsCfg.InsecureSkipVerify = false
 		if cfg.SSLMode == "verify-full" {
+			if cfg.Host == "" {
+				return nil, fmt.Errorf("--host is required when using sslmode=verify-full")
+			}
 			tlsCfg.ServerName = cfg.Host
 		}
 	default:
@@ -130,9 +138,6 @@ func buildTLSConfig(cfg Config) (*tls.Config, error) {
 		tlsCfg.RootCAs = pool
 	}
 
-	if (cfg.SSLCert != "") != (cfg.SSLKey != "") {
-		return nil, fmt.Errorf("both --sslcert and --sslkey must be provided together")
-	}
 	if cfg.SSLCert != "" && cfg.SSLKey != "" {
 		cert, err := tls.LoadX509KeyPair(cfg.SSLCert, cfg.SSLKey)
 		if err != nil {
