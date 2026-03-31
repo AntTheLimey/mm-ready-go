@@ -22,17 +22,6 @@ make build
 
 The binary is at `./bin/mm-ready-go`.
 
-### Option C: Download a pre-built binary
-
-Download from the [releases page](https://github.com/pgEdge/mm-ready-go/releases)
-for your platform:
-
-- `mm-ready-go-linux-amd64`
-- `mm-ready-go-linux-arm64`
-- `mm-ready-go-darwin-amd64`
-- `mm-ready-go-darwin-arm64`
-- `mm-ready-go-windows-amd64.exe`
-
 Verify the installation:
 
 ```bash
