@@ -26,6 +26,9 @@ Thumbs.db
 
 # Report output
 reports/
+
+# Specs and plans
+docs/superpowers/
 *.html
 *.json
 !go.sum
