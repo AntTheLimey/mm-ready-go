@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // MultipleDatabasesCheck flags when more than one user database exists.
@@ -18,7 +18,7 @@ func init() {
 }
 
 func (c *MultipleDatabasesCheck) Name() string     { return "multiple_databases" }
-func (c *MultipleDatabasesCheck) Category() string  { return "replication" }
+func (c *MultipleDatabasesCheck) Category() string { return "replication" }
 func (c *MultipleDatabasesCheck) Description() string {
 	return "More than one user database in the instance — Spock supports one DB per instance"
 }

@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // RulesCheck finds rules on tables that may cause unexpected behaviour with replication.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (RulesCheck) Name() string     { return "rules" }
-func (RulesCheck) Category() string  { return "schema" }
-func (RulesCheck) Mode() string      { return "scan" }
+func (RulesCheck) Category() string { return "schema" }
+func (RulesCheck) Mode() string     { return "scan" }
 func (RulesCheck) Description() string {
 	return "Rules on tables — can cause unexpected behaviour with logical replication"
 }
@@ -99,11 +99,11 @@ func (c RulesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, 
 		}
 
 		findings = append(findings, models.Finding{
-			Severity:  severity,
-			CheckName: c.Name(),
-			Category:  c.Category(),
-			Title:     fmt.Sprintf("%sRule '%s' on '%s' (%s)", insteadPrefix, ruleName, fqn, event),
-			Detail:    detail,
+			Severity:   severity,
+			CheckName:  c.Name(),
+			Category:   c.Category(),
+			Title:      fmt.Sprintf("%sRule '%s' on '%s' (%s)", insteadPrefix, ruleName, fqn, event),
+			Detail:     detail,
 			ObjectName: fmt.Sprintf("%s.%s", fqn, ruleName),
 			Remediation: "Consider converting rules to triggers (which can be controlled " +
 				"via session_replication_role), or disable rules on subscriber " +

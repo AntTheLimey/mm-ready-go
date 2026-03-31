@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // UpdateDeleteNoPkCheck finds tables without primary keys that have UPDATE/DELETE activity.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (UpdateDeleteNoPkCheck) Name() string     { return "tables_update_delete_no_pk" }
-func (UpdateDeleteNoPkCheck) Category() string  { return "schema" }
-func (UpdateDeleteNoPkCheck) Mode() string      { return "scan" }
+func (UpdateDeleteNoPkCheck) Category() string { return "schema" }
+func (UpdateDeleteNoPkCheck) Mode() string     { return "scan" }
 func (UpdateDeleteNoPkCheck) Description() string {
 	return "Tables without primary keys that have UPDATE/DELETE activity — " +
 		"these operations are silently dropped by Spock"

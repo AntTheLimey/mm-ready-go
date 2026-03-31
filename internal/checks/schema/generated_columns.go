@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // GeneratedColumnsCheck finds generated/stored columns with replication behavior differences.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (GeneratedColumnsCheck) Name() string     { return "generated_columns" }
-func (GeneratedColumnsCheck) Category() string  { return "schema" }
-func (GeneratedColumnsCheck) Mode() string      { return "scan" }
+func (GeneratedColumnsCheck) Category() string { return "schema" }
+func (GeneratedColumnsCheck) Mode() string     { return "scan" }
 func (GeneratedColumnsCheck) Description() string {
 	return "Generated/stored columns — replication behavior differences"
 }

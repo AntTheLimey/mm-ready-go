@@ -17,8 +17,8 @@ var extensionKnownIssues = map[string]string{
 		"Spatial indexes and topology objects need careful replication planning.",
 	"pg_partman": "pg_partman manages partitions via background worker. Ensure partition maintenance " +
 		"runs on all nodes or is replicated through DDL replication.",
-	"pgcrypto":   "pgcrypto is compatible. Ensure encryption keys are identical across nodes.",
-	"pg_trgm":    "pg_trgm provides trigram similarity functions. Compatible with Spock.",
+	"pgcrypto": "pgcrypto is compatible. Ensure encryption keys are identical across nodes.",
+	"pg_trgm":  "pg_trgm provides trigram similarity functions. Compatible with Spock.",
 	"btree_gist": "btree_gist provides GiST operator classes. Compatible with Spock, but exclusion " +
 		"constraints using these operators are evaluated locally per node.",
 	"btree_gin": "btree_gin provides GIN operator classes. Compatible with Spock.",
@@ -32,10 +32,10 @@ var extensionKnownIssues = map[string]string{
 		"connection strings are valid on all nodes.",
 	"postgres_fdw": "postgres_fdw provides foreign data wrappers. Foreign tables are not replicated. " +
 		"Ensure FDW configurations are set up on each node.",
-	"file_fdw":    "file_fdw reads from local files. Node-local — file paths must exist on each node.",
+	"file_fdw": "file_fdw reads from local files. Node-local — file paths must exist on each node.",
 	"timescaledb": "TimescaleDB has its own replication mechanisms that may conflict with Spock. " +
 		"Co-existence is not supported.",
-	"citus":       "Citus distributed tables are incompatible with Spock logical replication.",
+	"citus": "Citus distributed tables are incompatible with Spock logical replication.",
 	"pgstattuple": "pgstattuple provides tuple-level statistics functions. " +
 		"Monitoring-only extension, compatible with Spock.",
 }
@@ -713,12 +713,12 @@ func checkRules(schema *parser.ParsedSchema, checkName, category string) []model
 		}
 
 		findings = append(findings, models.Finding{
-			Severity:    severity,
-			CheckName:   checkName,
-			Category:    category,
-			Title:       fmt.Sprintf("%sRule '%s' on '%s' (%s)", insteadStr, rule.RuleName, fqn, rule.Event),
-			Detail:      detail,
-			ObjectName:  fmt.Sprintf("%s.%s", fqn, rule.RuleName),
+			Severity:   severity,
+			CheckName:  checkName,
+			Category:   category,
+			Title:      fmt.Sprintf("%sRule '%s' on '%s' (%s)", insteadStr, rule.RuleName, fqn, rule.Event),
+			Detail:     detail,
+			ObjectName: fmt.Sprintf("%s.%s", fqn, rule.RuleName),
 			Remediation: "Consider converting rules to triggers (which can be controlled " +
 				"via session_replication_role), or disable rules on subscriber " +
 				"nodes. Review whether the rule's effect should apply on both " +
@@ -931,11 +931,11 @@ func checkPgVersion(schema *parser.ParsedSchema, checkName, category string) []m
 	m := reMajor.FindStringSubmatch(versionStr)
 	if m == nil {
 		findings = append(findings, models.Finding{
-			Severity:  models.SeverityWarning,
-			CheckName: checkName,
-			Category:  category,
-			Title:     fmt.Sprintf("Unrecognized PostgreSQL version: %s", versionStr),
-			Detail:    fmt.Sprintf("Could not parse major version from '%s'.", versionStr),
+			Severity:    models.SeverityWarning,
+			CheckName:   checkName,
+			Category:    category,
+			Title:       fmt.Sprintf("Unrecognized PostgreSQL version: %s", versionStr),
+			Detail:      fmt.Sprintf("Could not parse major version from '%s'.", versionStr),
 			ObjectName:  "pg_version",
 			Remediation: "Verify the PostgreSQL version manually.",
 		})

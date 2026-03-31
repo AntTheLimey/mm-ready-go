@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // AdvisoryLocksCheck detects advisory lock usage in pg_stat_statements.
@@ -17,9 +17,9 @@ func init() {
 	check.Register(AdvisoryLocksCheck{})
 }
 
-func (AdvisoryLocksCheck) Name() string        { return "advisory_locks" }
-func (AdvisoryLocksCheck) Category() string     { return "sql_patterns" }
-func (AdvisoryLocksCheck) Mode() string         { return "scan" }
+func (AdvisoryLocksCheck) Name() string     { return "advisory_locks" }
+func (AdvisoryLocksCheck) Category() string { return "sql_patterns" }
+func (AdvisoryLocksCheck) Mode() string     { return "scan" }
 func (AdvisoryLocksCheck) Description() string {
 	return "Advisory lock usage — locks are node-local, not replicated"
 }

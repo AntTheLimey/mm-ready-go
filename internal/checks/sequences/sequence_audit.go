@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // SequenceAuditCheck audits all sequences, types, and ownership for snowflake migration.
@@ -17,9 +17,9 @@ func init() {
 	check.Register(SequenceAuditCheck{})
 }
 
-func (SequenceAuditCheck) Name() string        { return "sequence_audit" }
-func (SequenceAuditCheck) Category() string     { return "sequences" }
-func (SequenceAuditCheck) Mode() string         { return "scan" }
+func (SequenceAuditCheck) Name() string     { return "sequence_audit" }
+func (SequenceAuditCheck) Category() string { return "sequences" }
+func (SequenceAuditCheck) Mode() string     { return "scan" }
 func (SequenceAuditCheck) Description() string {
 	return "All sequences, types, and ownership — need snowflake migration plan"
 }

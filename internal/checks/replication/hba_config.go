@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // HbaConfigCheck verifies pg_hba.conf has replication connection entries.
@@ -16,8 +16,8 @@ func init() {
 	check.Register(&HbaConfigCheck{})
 }
 
-func (c *HbaConfigCheck) Name() string        { return "hba_config" }
-func (c *HbaConfigCheck) Category() string     { return "replication" }
+func (c *HbaConfigCheck) Name() string     { return "hba_config" }
+func (c *HbaConfigCheck) Category() string { return "replication" }
 func (c *HbaConfigCheck) Description() string {
 	return "pg_hba.conf must allow replication connections between nodes"
 }

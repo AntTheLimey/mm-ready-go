@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // UnloggedTablesCheck finds tables with UNLOGGED persistence.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (UnloggedTablesCheck) Name() string     { return "unlogged_tables" }
-func (UnloggedTablesCheck) Category() string  { return "schema" }
-func (UnloggedTablesCheck) Mode() string      { return "scan" }
+func (UnloggedTablesCheck) Category() string { return "schema" }
+func (UnloggedTablesCheck) Mode() string     { return "scan" }
 func (UnloggedTablesCheck) Description() string {
 	return "UNLOGGED tables — not written to WAL and cannot be replicated"
 }

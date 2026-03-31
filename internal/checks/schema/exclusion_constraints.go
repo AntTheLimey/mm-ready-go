@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // ExclusionConstraintsCheck finds exclusion constraints that cannot be enforced across nodes.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (ExclusionConstraintsCheck) Name() string     { return "exclusion_constraints" }
-func (ExclusionConstraintsCheck) Category() string  { return "schema" }
-func (ExclusionConstraintsCheck) Mode() string      { return "scan" }
+func (ExclusionConstraintsCheck) Category() string { return "schema" }
+func (ExclusionConstraintsCheck) Mode() string     { return "scan" }
 func (ExclusionConstraintsCheck) Description() string {
 	return "Exclusion constraints — not enforceable across Spock nodes"
 }

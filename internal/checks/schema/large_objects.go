@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // LargeObjectsCheck finds large objects and OID columns.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (LargeObjectsCheck) Name() string     { return "large_objects" }
-func (LargeObjectsCheck) Category() string  { return "schema" }
-func (LargeObjectsCheck) Mode() string      { return "scan" }
+func (LargeObjectsCheck) Category() string { return "schema" }
+func (LargeObjectsCheck) Mode() string     { return "scan" }
 func (LargeObjectsCheck) Description() string {
 	return "Large object (LOB) usage — logical decoding does not support them"
 }

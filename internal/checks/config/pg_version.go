@@ -7,9 +7,9 @@ import (
 	"sort"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // PgVersionCheck verifies that the PostgreSQL major version is supported by Spock 5.
@@ -29,9 +29,9 @@ var supportedMajors = map[int]bool{
 }
 
 func (PgVersionCheck) Name() string        { return "pg_version" }
-func (PgVersionCheck) Category() string     { return "config" }
-func (PgVersionCheck) Description() string  { return "PostgreSQL version compatibility with Spock 5" }
-func (PgVersionCheck) Mode() string         { return "scan" }
+func (PgVersionCheck) Category() string    { return "config" }
+func (PgVersionCheck) Description() string { return "PostgreSQL version compatibility with Spock 5" }
+func (PgVersionCheck) Mode() string        { return "scan" }
 
 func (c PgVersionCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var versionStr string

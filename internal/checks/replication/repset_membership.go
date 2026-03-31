@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // RepsetMembershipCheck verifies all user tables are in a Spock replication set.
@@ -17,7 +17,7 @@ func init() {
 }
 
 func (c *RepsetMembershipCheck) Name() string     { return "repset_membership" }
-func (c *RepsetMembershipCheck) Category() string  { return "replication" }
+func (c *RepsetMembershipCheck) Category() string { return "replication" }
 func (c *RepsetMembershipCheck) Description() string {
 	return "Verify all user tables are in a Spock replication set"
 }

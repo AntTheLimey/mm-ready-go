@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // NotifyListenCheck finds NOTIFY/pg_notify usage in functions and pg_stat_statements.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (NotifyListenCheck) Name() string     { return "notify_listen" }
-func (NotifyListenCheck) Category() string  { return "schema" }
-func (NotifyListenCheck) Mode() string      { return "scan" }
+func (NotifyListenCheck) Category() string { return "schema" }
+func (NotifyListenCheck) Mode() string     { return "scan" }
 func (NotifyListenCheck) Description() string {
 	return "LISTEN/NOTIFY usage — notifications are not replicated by Spock"
 }

@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // SharedPreloadCheck verifies that 'spock' is in shared_preload_libraries.
@@ -19,7 +19,7 @@ func init() {
 }
 
 func (SharedPreloadCheck) Name() string     { return "shared_preload_libraries" }
-func (SharedPreloadCheck) Category() string  { return "config" }
+func (SharedPreloadCheck) Category() string { return "config" }
 func (SharedPreloadCheck) Description() string {
 	return "shared_preload_libraries must include 'spock' for Spock operation"
 }

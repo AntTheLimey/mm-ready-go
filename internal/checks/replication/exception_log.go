@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // ExceptionLogCheck reviews the Spock exception log for apply errors.
@@ -17,7 +17,7 @@ func init() {
 }
 
 func (c *ExceptionLogCheck) Name() string     { return "exception_log" }
-func (c *ExceptionLogCheck) Category() string  { return "replication" }
+func (c *ExceptionLogCheck) Category() string { return "replication" }
 func (c *ExceptionLogCheck) Description() string {
 	return "Review Spock exception log for replication apply errors"
 }

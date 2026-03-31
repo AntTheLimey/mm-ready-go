@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // DatabaseEncodingCheck verifies the database encoding for Spock compatibility.
@@ -16,8 +16,8 @@ func init() {
 	check.Register(&DatabaseEncodingCheck{})
 }
 
-func (c *DatabaseEncodingCheck) Name() string        { return "database_encoding" }
-func (c *DatabaseEncodingCheck) Category() string     { return "replication" }
+func (c *DatabaseEncodingCheck) Name() string     { return "database_encoding" }
+func (c *DatabaseEncodingCheck) Category() string { return "replication" }
 func (c *DatabaseEncodingCheck) Description() string {
 	return "Database encoding — all Spock nodes must use the same encoding"
 }

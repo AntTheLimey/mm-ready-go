@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // ForeignKeysCheck finds foreign key relationships and CASCADE constraints.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (ForeignKeysCheck) Name() string     { return "foreign_keys" }
-func (ForeignKeysCheck) Category() string  { return "schema" }
-func (ForeignKeysCheck) Mode() string      { return "scan" }
+func (ForeignKeysCheck) Category() string { return "schema" }
+func (ForeignKeysCheck) Mode() string     { return "scan" }
 func (ForeignKeysCheck) Description() string {
 	return "Foreign key relationships — replication ordering and cross-node considerations"
 }

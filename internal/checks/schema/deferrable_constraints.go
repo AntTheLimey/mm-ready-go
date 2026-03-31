@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // DeferrableConstraintsCheck finds deferrable unique/PK constraints.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (DeferrableConstraintsCheck) Name() string     { return "deferrable_constraints" }
-func (DeferrableConstraintsCheck) Category() string  { return "schema" }
-func (DeferrableConstraintsCheck) Mode() string      { return "scan" }
+func (DeferrableConstraintsCheck) Category() string { return "schema" }
+func (DeferrableConstraintsCheck) Mode() string     { return "scan" }
 func (DeferrableConstraintsCheck) Description() string {
 	return "Deferrable unique/PK constraints — silently skipped by Spock conflict resolution"
 }

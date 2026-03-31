@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // StaleReplicationSlotsCheck detects inactive replication slots retaining WAL.
@@ -17,7 +17,7 @@ func init() {
 }
 
 func (c *StaleReplicationSlotsCheck) Name() string     { return "stale_replication_slots" }
-func (c *StaleReplicationSlotsCheck) Category() string  { return "replication" }
+func (c *StaleReplicationSlotsCheck) Category() string { return "replication" }
 func (c *StaleReplicationSlotsCheck) Description() string {
 	return "Inactive replication slots — retaining WAL and risk filling disk"
 }
@@ -99,7 +99,7 @@ func (c *StaleReplicationSlotsCheck) Run(ctx context.Context, conn *pgx.Conn) ([
 			Metadata: map[string]any{
 				"slot_type":           slotType,
 				"wal_retained_mb":     fmt.Sprintf("%.1f", walMB),
-				"restart_lsn":        restartStr,
+				"restart_lsn":         restartStr,
 				"confirmed_flush_lsn": flushStr,
 			},
 		})

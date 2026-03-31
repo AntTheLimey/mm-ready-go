@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // NumericColumnsCheck finds numeric columns whose names suggest accumulator/counter patterns.
@@ -19,8 +19,8 @@ func init() {
 }
 
 func (NumericColumnsCheck) Name() string     { return "numeric_columns" }
-func (NumericColumnsCheck) Category() string  { return "schema" }
-func (NumericColumnsCheck) Mode() string      { return "scan" }
+func (NumericColumnsCheck) Category() string { return "schema" }
+func (NumericColumnsCheck) Mode() string     { return "scan" }
 func (NumericColumnsCheck) Description() string {
 	return "Numeric columns that may be Delta-Apply candidates (counters, balances, etc.)"
 }

@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // IdleTransactionTimeoutCheck checks whether idle transaction timeouts are configured.
@@ -18,7 +18,7 @@ func init() {
 }
 
 func (IdleTransactionTimeoutCheck) Name() string     { return "idle_transaction_timeout" }
-func (IdleTransactionTimeoutCheck) Category() string  { return "config" }
+func (IdleTransactionTimeoutCheck) Category() string { return "config" }
 func (IdleTransactionTimeoutCheck) Description() string {
 	return "Idle-in-transaction timeout — long idle transactions block VACUUM and cause bloat"
 }

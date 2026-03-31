@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // StoredProceduresCheck audits stored procedures/functions for write operations and DDL.
@@ -18,9 +18,9 @@ func init() {
 	check.Register(StoredProceduresCheck{})
 }
 
-func (StoredProceduresCheck) Name() string        { return "stored_procedures" }
-func (StoredProceduresCheck) Category() string     { return "functions" }
-func (StoredProceduresCheck) Mode() string         { return "scan" }
+func (StoredProceduresCheck) Name() string     { return "stored_procedures" }
+func (StoredProceduresCheck) Category() string { return "functions" }
+func (StoredProceduresCheck) Mode() string     { return "scan" }
 func (StoredProceduresCheck) Description() string {
 	return "Audit stored procedures/functions for write operations and DDL"
 }
@@ -108,13 +108,13 @@ func (c StoredProceduresCheck) Run(ctx context.Context, conn *pgx.Conn) ([]model
 			CheckName: c.Name(),
 			Category:  c.Category(),
 			Title: fmt.Sprintf("%s '%s' (%s, %s) contains write operations",
-				strings.Title(kindLabel), fqn, language, volLabel), //nolint:staticcheck
+				strings.Title(kindLabel), fqn, language, volLabel), //nolint:staticcheck // strings.Title is deprecated but adequate for single-word labels
 			Detail: fmt.Sprintf(
 				"%s '%s' written in %s (%s) contains potential write operations: %s. "+
 					"Write operations inside functions/procedures are replicated through "+
 					"the WAL (row-level changes), not by replaying the function call. "+
 					"However, side effects like DDL, NOTIFY, or external calls are not replicated.",
-				strings.Title(kindLabel), fqn, language, volLabel, //nolint:staticcheck
+				strings.Title(kindLabel), fqn, language, volLabel, //nolint:staticcheck // strings.Title is deprecated but adequate for single-word labels
 				strings.Join(foundWrites, ", "),
 			),
 			ObjectName: fqn,

@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // ConflictLogCheck reviews the Spock conflict log for recent conflicts.
@@ -17,7 +17,7 @@ func init() {
 }
 
 func (c *ConflictLogCheck) Name() string     { return "conflict_log" }
-func (c *ConflictLogCheck) Category() string  { return "replication" }
+func (c *ConflictLogCheck) Category() string { return "replication" }
 func (c *ConflictLogCheck) Description() string {
 	return "Review Spock conflict log for recent replication conflicts"
 }
@@ -141,10 +141,10 @@ func (c *ConflictLogCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Fi
 				cr.tableName, cr.count, cr.conflictType, cr.resolution, cr.lastConflict),
 			ObjectName: cr.tableName,
 			Metadata: map[string]any{
-				"conflict_type":  cr.conflictType,
-				"resolution":     cr.resolution,
-				"count":          cr.count,
-				"last_conflict":  cr.lastConflict,
+				"conflict_type": cr.conflictType,
+				"resolution":    cr.resolution,
+				"count":         cr.count,
+				"last_conflict": cr.lastConflict,
 			},
 		})
 	}

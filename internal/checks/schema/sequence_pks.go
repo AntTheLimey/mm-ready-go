@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // SequencePKsCheck finds PK columns backed by standard sequences that need snowflake migration.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (SequencePKsCheck) Name() string     { return "sequence_pks" }
-func (SequencePKsCheck) Category() string  { return "schema" }
-func (SequencePKsCheck) Mode() string      { return "scan" }
+func (SequencePKsCheck) Category() string { return "schema" }
+func (SequencePKsCheck) Mode() string     { return "scan" }
 func (SequencePKsCheck) Description() string {
 	return "Primary keys using standard sequences — must migrate to pgEdge snowflake"
 }

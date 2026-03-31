@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // PgMinorVersionCheck reports the PostgreSQL minor version so all cluster nodes can be compared.
@@ -17,10 +17,12 @@ func init() {
 	check.Register(PgMinorVersionCheck{})
 }
 
-func (PgMinorVersionCheck) Name() string        { return "pg_minor_version" }
-func (PgMinorVersionCheck) Category() string     { return "config" }
-func (PgMinorVersionCheck) Description() string  { return "PostgreSQL minor version — all cluster nodes should match" }
-func (PgMinorVersionCheck) Mode() string         { return "audit" }
+func (PgMinorVersionCheck) Name() string     { return "pg_minor_version" }
+func (PgMinorVersionCheck) Category() string { return "config" }
+func (PgMinorVersionCheck) Description() string {
+	return "PostgreSQL minor version — all cluster nodes should match"
+}
+func (PgMinorVersionCheck) Mode() string { return "audit" }
 
 func (c PgMinorVersionCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var fullVersion, serverVersion string

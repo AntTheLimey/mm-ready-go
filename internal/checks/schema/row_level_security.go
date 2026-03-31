@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // RowLevelSecurityCheck finds tables with RLS enabled.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (RowLevelSecurityCheck) Name() string     { return "row_level_security" }
-func (RowLevelSecurityCheck) Category() string  { return "schema" }
-func (RowLevelSecurityCheck) Mode() string      { return "scan" }
+func (RowLevelSecurityCheck) Category() string { return "schema" }
+func (RowLevelSecurityCheck) Mode() string     { return "scan" }
 func (RowLevelSecurityCheck) Description() string {
 	return "Row-level security policies — apply worker runs as superuser, bypasses RLS"
 }

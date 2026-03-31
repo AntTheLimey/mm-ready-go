@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // SpockGucsCheck verifies key Spock configuration parameters (GUCs).
@@ -18,9 +18,9 @@ func init() {
 }
 
 func (SpockGucsCheck) Name() string        { return "spock_gucs" }
-func (SpockGucsCheck) Category() string     { return "config" }
-func (SpockGucsCheck) Description() string  { return "Verify key Spock configuration parameters (GUCs)" }
-func (SpockGucsCheck) Mode() string         { return "audit" }
+func (SpockGucsCheck) Category() string    { return "config" }
+func (SpockGucsCheck) Description() string { return "Verify key Spock configuration parameters (GUCs)" }
+func (SpockGucsCheck) Mode() string        { return "audit" }
 
 type gucSpec struct {
 	name        string
@@ -97,11 +97,11 @@ func (c SpockGucsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Findi
 
 		if value != guc.recommended {
 			findings = append(findings, models.Finding{
-				Severity:  guc.severity,
-				CheckName: c.Name(),
-				Category:  c.Category(),
-				Title:     fmt.Sprintf("%s = '%s' (recommended: '%s')", guc.name, value, guc.recommended),
-				Detail:    fmt.Sprintf("%s\n\nCurrent value: '%s'.", guc.detail, value),
+				Severity:   guc.severity,
+				CheckName:  c.Name(),
+				Category:   c.Category(),
+				Title:      fmt.Sprintf("%s = '%s' (recommended: '%s')", guc.name, value, guc.recommended),
+				Detail:     fmt.Sprintf("%s\n\nCurrent value: '%s'.", guc.detail, value),
 				ObjectName: guc.name,
 				Remediation: fmt.Sprintf(
 					"Consider setting:\n  ALTER SYSTEM SET %s = '%s';",

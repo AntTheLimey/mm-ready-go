@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // PgStatStatementsCheck checks whether pg_stat_statements is installed and queryable.
@@ -17,9 +17,9 @@ func init() {
 	check.Register(PgStatStatementsCheck{})
 }
 
-func (PgStatStatementsCheck) Name() string        { return "pg_stat_statements_check" }
-func (PgStatStatementsCheck) Category() string     { return "extensions" }
-func (PgStatStatementsCheck) Mode() string         { return "scan" }
+func (PgStatStatementsCheck) Name() string     { return "pg_stat_statements_check" }
+func (PgStatStatementsCheck) Category() string { return "extensions" }
+func (PgStatStatementsCheck) Mode() string     { return "scan" }
 func (PgStatStatementsCheck) Description() string {
 	return "pg_stat_statements availability for SQL pattern observation"
 }

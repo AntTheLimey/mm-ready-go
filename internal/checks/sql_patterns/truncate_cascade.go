@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // TruncateCascadeCheck detects TRUNCATE CASCADE and RESTART IDENTITY in pg_stat_statements.
@@ -17,9 +17,9 @@ func init() {
 	check.Register(TruncateCascadeCheck{})
 }
 
-func (TruncateCascadeCheck) Name() string        { return "truncate_cascade" }
-func (TruncateCascadeCheck) Category() string     { return "sql_patterns" }
-func (TruncateCascadeCheck) Mode() string         { return "scan" }
+func (TruncateCascadeCheck) Name() string     { return "truncate_cascade" }
+func (TruncateCascadeCheck) Category() string { return "sql_patterns" }
+func (TruncateCascadeCheck) Mode() string     { return "scan" }
 func (TruncateCascadeCheck) Description() string {
 	return "TRUNCATE ... CASCADE and RESTART IDENTITY — replication behaviour caveats"
 }

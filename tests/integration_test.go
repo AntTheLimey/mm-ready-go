@@ -25,7 +25,6 @@ import (
 	_ "github.com/pgEdge/mm-ready-go/internal/checks" // trigger all check registrations
 )
 
-
 func TestFullScanCheckCount(t *testing.T) {
 	ctx := context.Background()
 	conn, err := connection.Connect(ctx, connection.Config{

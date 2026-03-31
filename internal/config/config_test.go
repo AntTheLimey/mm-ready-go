@@ -87,9 +87,14 @@ func TestMergeCLIIncludeOnlyOverrides(t *testing.T) {
 
 func TestDiscoverConfigNoFile(t *testing.T) {
 	dir := t.TempDir()
-	origDir, _ := os.Getwd()
-	defer os.Chdir(origDir)
-	os.Chdir(dir)
+	origDir, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chdir(origDir) }()
+	if err := os.Chdir(dir); err != nil {
+		t.Fatal(err)
+	}
 
 	path := DiscoverConfigFile()
 	if path != "" {
@@ -101,12 +106,19 @@ func TestDiscoverConfigCwd(t *testing.T) {
 	dir := t.TempDir()
 	// Resolve symlinks so the comparison works on macOS (/var -> /private/var)
 	dir, _ = filepath.EvalSymlinks(dir)
-	origDir, _ := os.Getwd()
-	defer os.Chdir(origDir)
-	os.Chdir(dir)
+	origDir, err := os.Getwd()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = os.Chdir(origDir) }()
+	if err := os.Chdir(dir); err != nil {
+		t.Fatal(err)
+	}
 
 	cfgPath := filepath.Join(dir, "mm-ready.yaml")
-	os.WriteFile(cfgPath, []byte("checks:\n  exclude: []\n"), 0o644)
+	if err := os.WriteFile(cfgPath, []byte("checks:\n  exclude: []\n"), 0o644); err != nil {
+		t.Fatal(err)
+	}
 
 	path := DiscoverConfigFile()
 	if path != cfgPath {

@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // TrackCommitTimestampCheck verifies that track_commit_timestamp is on.
@@ -18,7 +18,7 @@ func init() {
 }
 
 func (TrackCommitTimestampCheck) Name() string     { return "track_commit_timestamp" }
-func (TrackCommitTimestampCheck) Category() string  { return "config" }
+func (TrackCommitTimestampCheck) Category() string { return "config" }
 func (TrackCommitTimestampCheck) Description() string {
 	return "track_commit_timestamp must be on for Spock conflict resolution"
 }

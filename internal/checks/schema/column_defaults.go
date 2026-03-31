@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // ColumnDefaultsCheck finds volatile column defaults (now(), random(), etc.).
@@ -19,8 +19,8 @@ func init() {
 }
 
 func (ColumnDefaultsCheck) Name() string     { return "column_defaults" }
-func (ColumnDefaultsCheck) Category() string  { return "schema" }
-func (ColumnDefaultsCheck) Mode() string      { return "scan" }
+func (ColumnDefaultsCheck) Category() string { return "schema" }
+func (ColumnDefaultsCheck) Mode() string     { return "scan" }
 func (ColumnDefaultsCheck) Description() string {
 	return "Volatile column defaults (now(), random(), etc.) — may differ across nodes"
 }

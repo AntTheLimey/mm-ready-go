@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // ConcurrentIndexesCheck detects CREATE INDEX CONCURRENTLY in pg_stat_statements.
@@ -18,9 +18,9 @@ func init() {
 	check.Register(ConcurrentIndexesCheck{})
 }
 
-func (ConcurrentIndexesCheck) Name() string        { return "concurrent_indexes" }
-func (ConcurrentIndexesCheck) Category() string     { return "sql_patterns" }
-func (ConcurrentIndexesCheck) Mode() string         { return "scan" }
+func (ConcurrentIndexesCheck) Name() string     { return "concurrent_indexes" }
+func (ConcurrentIndexesCheck) Category() string { return "sql_patterns" }
+func (ConcurrentIndexesCheck) Mode() string     { return "scan" }
 func (ConcurrentIndexesCheck) Description() string {
 	return "CREATE INDEX CONCURRENTLY — must be created manually on each node"
 }

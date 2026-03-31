@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // TablespaceUsageCheck finds objects using non-default tablespaces.
@@ -19,8 +19,8 @@ func init() {
 }
 
 func (TablespaceUsageCheck) Name() string     { return "tablespace_usage" }
-func (TablespaceUsageCheck) Category() string  { return "schema" }
-func (TablespaceUsageCheck) Mode() string      { return "scan" }
+func (TablespaceUsageCheck) Category() string { return "schema" }
+func (TablespaceUsageCheck) Mode() string     { return "scan" }
 func (TablespaceUsageCheck) Description() string {
 	return "Non-default tablespace usage — tablespaces must exist on all nodes"
 }

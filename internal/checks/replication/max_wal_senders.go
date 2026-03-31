@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // MaxWalSendersCheck verifies sufficient WAL senders for Spock replication.
@@ -17,7 +17,7 @@ func init() {
 }
 
 func (c *MaxWalSendersCheck) Name() string     { return "max_wal_senders" }
-func (c *MaxWalSendersCheck) Category() string  { return "replication" }
+func (c *MaxWalSendersCheck) Category() string { return "replication" }
 func (c *MaxWalSendersCheck) Description() string {
 	return "Sufficient max_wal_senders for Spock logical replication"
 }

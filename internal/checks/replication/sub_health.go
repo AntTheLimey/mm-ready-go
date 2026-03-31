@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // SubscriptionHealthCheck verifies health of Spock subscriptions.
@@ -17,7 +17,7 @@ func init() {
 }
 
 func (c *SubscriptionHealthCheck) Name() string     { return "subscription_health" }
-func (c *SubscriptionHealthCheck) Category() string  { return "replication" }
+func (c *SubscriptionHealthCheck) Category() string { return "replication" }
 func (c *SubscriptionHealthCheck) Description() string {
 	return "Check health of Spock subscriptions"
 }

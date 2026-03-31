@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // DdlStatementsCheck detects DDL statements in pg_stat_statements.
@@ -18,9 +18,9 @@ func init() {
 	check.Register(DdlStatementsCheck{})
 }
 
-func (DdlStatementsCheck) Name() string        { return "ddl_statements" }
-func (DdlStatementsCheck) Category() string     { return "sql_patterns" }
-func (DdlStatementsCheck) Mode() string         { return "scan" }
+func (DdlStatementsCheck) Name() string     { return "ddl_statements" }
+func (DdlStatementsCheck) Category() string { return "sql_patterns" }
+func (DdlStatementsCheck) Mode() string     { return "scan" }
 func (DdlStatementsCheck) Description() string {
 	return "DDL statements — must use Spock DDL replication or manual coordination"
 }

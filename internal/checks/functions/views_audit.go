@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // ViewsAuditCheck audits views for write-capable views and materialized views.
@@ -18,9 +18,9 @@ func init() {
 	check.Register(ViewsAuditCheck{})
 }
 
-func (ViewsAuditCheck) Name() string        { return "views_audit" }
-func (ViewsAuditCheck) Category() string     { return "functions" }
-func (ViewsAuditCheck) Mode() string         { return "both" }
+func (ViewsAuditCheck) Name() string     { return "views_audit" }
+func (ViewsAuditCheck) Category() string { return "functions" }
+func (ViewsAuditCheck) Mode() string     { return "both" }
 func (ViewsAuditCheck) Description() string {
 	return "Audit views — updatable views and materialized views have replication considerations"
 }

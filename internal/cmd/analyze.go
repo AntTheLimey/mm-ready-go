@@ -29,7 +29,7 @@ var analyzeCmd = &cobra.Command{
 
 func init() {
 	analyzeCmd.Flags().StringVar(&analyzeFile, "file", "", "Path to pg_dump SQL file (required)")
-	analyzeCmd.MarkFlagRequired("file")
+	_ = analyzeCmd.MarkFlagRequired("file")
 	addOutputFlags(analyzeCmd, &analyzeOut)
 	addConfigFlags(analyzeCmd)
 	addReportFlags(analyzeCmd)

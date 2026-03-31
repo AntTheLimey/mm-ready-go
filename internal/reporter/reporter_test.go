@@ -162,7 +162,9 @@ func TestJSONValidJSON(t *testing.T) {
 
 func TestJSONHasRequiredKeys(t *testing.T) {
 	var data map[string]any
-	json.Unmarshal([]byte(RenderJSON(sampleReport())), &data)
+	if err := json.Unmarshal([]byte(RenderJSON(sampleReport())), &data); err != nil {
+		t.Fatal(err)
+	}
 	for _, key := range []string{"meta", "summary", "results"} {
 		if _, ok := data[key]; !ok {
 			t.Errorf("missing key %q", key)
@@ -172,7 +174,9 @@ func TestJSONHasRequiredKeys(t *testing.T) {
 
 func TestJSONSummaryCounts(t *testing.T) {
 	var data map[string]any
-	json.Unmarshal([]byte(RenderJSON(sampleReport())), &data)
+	if err := json.Unmarshal([]byte(RenderJSON(sampleReport())), &data); err != nil {
+		t.Fatal(err)
+	}
 	s := data["summary"].(map[string]any)
 	checks := map[string]float64{
 		"critical":     1,
@@ -191,7 +195,9 @@ func TestJSONSummaryCounts(t *testing.T) {
 
 func TestJSONResultsCount(t *testing.T) {
 	var data map[string]any
-	json.Unmarshal([]byte(RenderJSON(sampleReport())), &data)
+	if err := json.Unmarshal([]byte(RenderJSON(sampleReport())), &data); err != nil {
+		t.Fatal(err)
+	}
 	results := data["results"].([]any)
 	if len(results) != 7 {
 		t.Errorf("results count = %d, want 7", len(results))
@@ -200,7 +206,9 @@ func TestJSONResultsCount(t *testing.T) {
 
 func TestJSONFindingFields(t *testing.T) {
 	var data map[string]any
-	json.Unmarshal([]byte(RenderJSON(sampleReport())), &data)
+	if err := json.Unmarshal([]byte(RenderJSON(sampleReport())), &data); err != nil {
+		t.Fatal(err)
+	}
 	results := data["results"].([]any)
 	wal := results[0].(map[string]any)
 	if wal["check_name"] != "wal_level" {
@@ -218,7 +226,9 @@ func TestJSONFindingFields(t *testing.T) {
 
 func TestJSONErrorReported(t *testing.T) {
 	var data map[string]any
-	json.Unmarshal([]byte(RenderJSON(sampleReport())), &data)
+	if err := json.Unmarshal([]byte(RenderJSON(sampleReport())), &data); err != nil {
+		t.Fatal(err)
+	}
 	results := data["results"].([]any)
 	for _, r := range results {
 		m := r.(map[string]any)

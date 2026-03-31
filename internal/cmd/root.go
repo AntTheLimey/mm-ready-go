@@ -16,7 +16,7 @@ var rootCmd = &cobra.Command{
 	Long:  "mm-ready scans a PostgreSQL database and generates a compatibility report for pgEdge Spock 5 multi-master replication.",
 	// Default to scan if no subcommand given but args are present
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Help()
+		_ = cmd.Help()
 		os.Exit(1)
 	},
 }

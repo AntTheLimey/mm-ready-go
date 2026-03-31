@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // MaxWorkerProcessesCheck verifies sufficient worker processes for Spock.
@@ -17,7 +17,7 @@ func init() {
 }
 
 func (c *MaxWorkerProcessesCheck) Name() string     { return "max_worker_processes" }
-func (c *MaxWorkerProcessesCheck) Category() string  { return "replication" }
+func (c *MaxWorkerProcessesCheck) Category() string { return "replication" }
 func (c *MaxWorkerProcessesCheck) Description() string {
 	return "Sufficient worker processes for Spock background workers"
 }
@@ -31,7 +31,7 @@ func (c *MaxWorkerProcessesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]mo
 	}
 
 	var maxWorkers int
-	fmt.Sscanf(maxWorkersStr, "%d", &maxWorkers)
+	_, _ = fmt.Sscanf(maxWorkersStr, "%d", &maxWorkers)
 
 	if maxWorkers < 16 {
 		return []models.Finding{{

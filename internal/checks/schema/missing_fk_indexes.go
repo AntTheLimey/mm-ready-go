@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // MissingFKIndexesCheck finds FK columns on the referencing side that lack a matching index.
@@ -19,8 +19,8 @@ func init() {
 }
 
 func (MissingFKIndexesCheck) Name() string     { return "missing_fk_indexes" }
-func (MissingFKIndexesCheck) Category() string  { return "schema" }
-func (MissingFKIndexesCheck) Mode() string      { return "scan" }
+func (MissingFKIndexesCheck) Category() string { return "schema" }
+func (MissingFKIndexesCheck) Mode() string     { return "scan" }
 func (MissingFKIndexesCheck) Description() string {
 	return "Foreign key columns without indexes — slow cascades and lock contention"
 }

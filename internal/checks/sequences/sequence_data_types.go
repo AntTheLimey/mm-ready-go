@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // SequenceDataTypesCheck flags smallint/integer sequences that may overflow faster in multi-master.
@@ -17,9 +17,9 @@ func init() {
 	check.Register(SequenceDataTypesCheck{})
 }
 
-func (SequenceDataTypesCheck) Name() string        { return "sequence_data_types" }
-func (SequenceDataTypesCheck) Category() string     { return "sequences" }
-func (SequenceDataTypesCheck) Mode() string         { return "scan" }
+func (SequenceDataTypesCheck) Name() string     { return "sequence_data_types" }
+func (SequenceDataTypesCheck) Category() string { return "sequences" }
+func (SequenceDataTypesCheck) Mode() string     { return "scan" }
 func (SequenceDataTypesCheck) Description() string {
 	return "Sequence data types — smallint/integer may overflow faster in multi-master"
 }

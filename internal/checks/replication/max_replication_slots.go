@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // MaxReplicationSlotsCheck verifies sufficient replication slots for Spock.
@@ -17,7 +17,7 @@ func init() {
 }
 
 func (c *MaxReplicationSlotsCheck) Name() string     { return "max_replication_slots" }
-func (c *MaxReplicationSlotsCheck) Category() string  { return "replication" }
+func (c *MaxReplicationSlotsCheck) Category() string { return "replication" }
 func (c *MaxReplicationSlotsCheck) Description() string {
 	return "Sufficient replication slots for Spock node connections"
 }
@@ -31,7 +31,7 @@ func (c *MaxReplicationSlotsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]m
 	}
 
 	var maxSlots int
-	fmt.Sscanf(maxSlotsStr, "%d", &maxSlots)
+	_, _ = fmt.Sscanf(maxSlotsStr, "%d", &maxSlots)
 
 	var usedSlots int
 	err = conn.QueryRow(ctx, "SELECT count(*) FROM pg_catalog.pg_replication_slots;").Scan(&usedSlots)

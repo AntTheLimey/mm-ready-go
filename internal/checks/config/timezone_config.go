@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // TimezoneConfigCheck verifies that timezone settings are UTC for multi-master consistency.
@@ -17,10 +17,12 @@ func init() {
 	check.Register(TimezoneConfigCheck{})
 }
 
-func (TimezoneConfigCheck) Name() string        { return "timezone_config" }
-func (TimezoneConfigCheck) Category() string     { return "config" }
-func (TimezoneConfigCheck) Description() string  { return "Timezone settings — UTC recommended for consistent commit timestamps" }
-func (TimezoneConfigCheck) Mode() string         { return "scan" }
+func (TimezoneConfigCheck) Name() string     { return "timezone_config" }
+func (TimezoneConfigCheck) Category() string { return "config" }
+func (TimezoneConfigCheck) Description() string {
+	return "Timezone settings — UTC recommended for consistent commit timestamps"
+}
+func (TimezoneConfigCheck) Mode() string { return "scan" }
 
 func (c TimezoneConfigCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var tz string

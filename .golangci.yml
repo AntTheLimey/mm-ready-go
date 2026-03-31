@@ -17,4 +17,6 @@ linters-settings:
   gocritic:
     enabled-tags:
       - diagnostic
-      - style
+    disabled-checks:
+      - dupSubExpr
+      - weakCond

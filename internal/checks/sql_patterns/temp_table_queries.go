@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // TempTableQueriesCheck detects CREATE TEMP TABLE in pg_stat_statements.
@@ -18,9 +18,9 @@ func init() {
 	check.Register(TempTableQueriesCheck{})
 }
 
-func (TempTableQueriesCheck) Name() string        { return "temp_table_queries" }
-func (TempTableQueriesCheck) Category() string     { return "sql_patterns" }
-func (TempTableQueriesCheck) Mode() string         { return "scan" }
+func (TempTableQueriesCheck) Name() string     { return "temp_table_queries" }
+func (TempTableQueriesCheck) Category() string { return "sql_patterns" }
+func (TempTableQueriesCheck) Mode() string     { return "scan" }
 func (TempTableQueriesCheck) Description() string {
 	return "CREATE TEMP TABLE in SQL — session-local, not replicated"
 }

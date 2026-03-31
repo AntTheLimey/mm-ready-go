@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // EventTriggersCheck finds event triggers and evaluates their replication impact.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (EventTriggersCheck) Name() string     { return "event_triggers" }
-func (EventTriggersCheck) Category() string  { return "schema" }
-func (EventTriggersCheck) Mode() string      { return "scan" }
+func (EventTriggersCheck) Category() string { return "schema" }
+func (EventTriggersCheck) Mode() string     { return "scan" }
 func (EventTriggersCheck) Description() string {
 	return "Event triggers — fire on DDL events, may interact with Spock DDL replication"
 }

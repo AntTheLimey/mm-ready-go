@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // PrimaryKeysCheck finds tables without primary keys.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (PrimaryKeysCheck) Name() string     { return "primary_keys" }
-func (PrimaryKeysCheck) Category() string  { return "schema" }
-func (PrimaryKeysCheck) Mode() string      { return "scan" }
+func (PrimaryKeysCheck) Category() string { return "schema" }
+func (PrimaryKeysCheck) Mode() string     { return "scan" }
 func (PrimaryKeysCheck) Description() string {
 	return "Tables without primary keys — affects Spock replication behaviour"
 }

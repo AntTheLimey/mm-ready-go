@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // InstalledExtensionsCheck audits installed extensions for known Spock compatibility issues.
@@ -46,8 +46,8 @@ var warnExtensions = map[string]bool{
 }
 
 func (InstalledExtensionsCheck) Name() string     { return "installed_extensions" }
-func (InstalledExtensionsCheck) Category() string  { return "extensions" }
-func (InstalledExtensionsCheck) Mode() string      { return "scan" }
+func (InstalledExtensionsCheck) Category() string { return "extensions" }
+func (InstalledExtensionsCheck) Mode() string     { return "scan" }
 func (InstalledExtensionsCheck) Description() string {
 	return "Audit installed extensions for known Spock compatibility issues"
 }

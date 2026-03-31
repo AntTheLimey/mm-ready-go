@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // SnowflakeExtCheck verifies whether the pgEdge Snowflake extension is available.
@@ -17,9 +17,9 @@ func init() {
 	check.Register(SnowflakeExtCheck{})
 }
 
-func (SnowflakeExtCheck) Name() string        { return "snowflake_ext" }
-func (SnowflakeExtCheck) Category() string     { return "extensions" }
-func (SnowflakeExtCheck) Mode() string         { return "scan" }
+func (SnowflakeExtCheck) Name() string     { return "snowflake_ext" }
+func (SnowflakeExtCheck) Category() string { return "extensions" }
+func (SnowflakeExtCheck) Mode() string     { return "scan" }
 func (SnowflakeExtCheck) Description() string {
 	return "pgEdge Snowflake extension availability for globally unique ID generation"
 }

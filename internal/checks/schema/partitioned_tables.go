@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // PartitionedTablesCheck finds partitioned tables and reviews their strategy.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (PartitionedTablesCheck) Name() string     { return "partitioned_tables" }
-func (PartitionedTablesCheck) Category() string  { return "schema" }
-func (PartitionedTablesCheck) Mode() string      { return "scan" }
+func (PartitionedTablesCheck) Category() string { return "schema" }
+func (PartitionedTablesCheck) Mode() string     { return "scan" }
 func (PartitionedTablesCheck) Description() string {
 	return "Partitioned tables — review partition strategy for Spock compatibility"
 }

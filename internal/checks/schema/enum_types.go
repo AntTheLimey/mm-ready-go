@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // EnumTypesCheck finds ENUM types that require multi-node coordination for DDL changes.
@@ -19,8 +19,8 @@ func init() {
 }
 
 func (EnumTypesCheck) Name() string     { return "enum_types" }
-func (EnumTypesCheck) Category() string  { return "schema" }
-func (EnumTypesCheck) Mode() string      { return "scan" }
+func (EnumTypesCheck) Category() string { return "schema" }
+func (EnumTypesCheck) Mode() string     { return "scan" }
 func (EnumTypesCheck) Description() string {
 	return "ENUM types — DDL changes to enums require multi-node coordination"
 }

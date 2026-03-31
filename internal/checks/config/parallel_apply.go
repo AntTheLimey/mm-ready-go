@@ -7,9 +7,9 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // ParallelApplyCheck verifies parallel apply worker configuration for Spock performance.
@@ -19,10 +19,12 @@ func init() {
 	check.Register(ParallelApplyCheck{})
 }
 
-func (ParallelApplyCheck) Name() string        { return "parallel_apply" }
-func (ParallelApplyCheck) Category() string     { return "config" }
-func (ParallelApplyCheck) Description() string  { return "Parallel apply workers configuration for Spock performance" }
-func (ParallelApplyCheck) Mode() string         { return "scan" }
+func (ParallelApplyCheck) Name() string     { return "parallel_apply" }
+func (ParallelApplyCheck) Category() string { return "config" }
+func (ParallelApplyCheck) Description() string {
+	return "Parallel apply workers configuration for Spock performance"
+}
+func (ParallelApplyCheck) Mode() string { return "scan" }
 
 func (c ParallelApplyCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	paramNames := []string{

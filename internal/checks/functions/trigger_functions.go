@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // TriggerFunctionsCheck audits triggers for replication firing behaviour.
@@ -17,9 +17,9 @@ func init() {
 	check.Register(TriggerFunctionsCheck{})
 }
 
-func (TriggerFunctionsCheck) Name() string        { return "trigger_functions" }
-func (TriggerFunctionsCheck) Category() string     { return "functions" }
-func (TriggerFunctionsCheck) Mode() string         { return "scan" }
+func (TriggerFunctionsCheck) Name() string     { return "trigger_functions" }
+func (TriggerFunctionsCheck) Category() string { return "functions" }
+func (TriggerFunctionsCheck) Mode() string     { return "scan" }
 func (TriggerFunctionsCheck) Description() string {
 	return "Triggers — ENABLE REPLICA and ENABLE ALWAYS both fire during Spock apply"
 }

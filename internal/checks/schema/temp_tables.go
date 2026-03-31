@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // TempTablesCheck finds functions/procedures that CREATE TEMP TABLE.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (TempTablesCheck) Name() string     { return "temp_tables" }
-func (TempTablesCheck) Category() string  { return "schema" }
-func (TempTablesCheck) Mode() string      { return "scan" }
+func (TempTablesCheck) Category() string { return "schema" }
+func (TempTablesCheck) Mode() string     { return "scan" }
 func (TempTablesCheck) Description() string {
 	return "TEMPORARY tables — session-local, never replicated"
 }

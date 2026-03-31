@@ -18,13 +18,13 @@ type LogStatement struct {
 
 // LogAnalysis aggregates log analysis results.
 type LogAnalysis struct {
-	TotalStatements  int
-	DDLStatements    []LogStatement
-	TruncateCascade  []LogStatement
-	CreateTempTable  []LogStatement
-	AdvisoryLocks    []LogStatement
+	TotalStatements   int
+	DDLStatements     []LogStatement
+	TruncateCascade   []LogStatement
+	CreateTempTable   []LogStatement
+	AdvisoryLocks     []LogStatement
 	ConcurrentIndexes []LogStatement
-	OtherNotable     []LogStatement
+	OtherNotable      []LogStatement
 }
 
 // HasFindings returns true if any notable patterns were found.

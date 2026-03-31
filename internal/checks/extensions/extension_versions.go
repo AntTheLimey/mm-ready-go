@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // ExtensionVersionsCheck compares installed extension versions to available versions.
@@ -17,9 +17,9 @@ func init() {
 	check.Register(ExtensionVersionsCheck{})
 }
 
-func (ExtensionVersionsCheck) Name() string        { return "extension_versions" }
-func (ExtensionVersionsCheck) Category() string     { return "extensions" }
-func (ExtensionVersionsCheck) Mode() string         { return "scan" }
+func (ExtensionVersionsCheck) Name() string     { return "extension_versions" }
+func (ExtensionVersionsCheck) Category() string { return "extensions" }
+func (ExtensionVersionsCheck) Mode() string     { return "scan" }
 func (ExtensionVersionsCheck) Description() string {
 	return "Check installed extension versions against available upgrades"
 }

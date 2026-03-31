@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // InheritanceCheck finds traditional (non-partition) table inheritance.
@@ -18,8 +18,8 @@ func init() {
 }
 
 func (InheritanceCheck) Name() string     { return "inheritance" }
-func (InheritanceCheck) Category() string  { return "schema" }
-func (InheritanceCheck) Mode() string      { return "scan" }
+func (InheritanceCheck) Category() string { return "schema" }
+func (InheritanceCheck) Mode() string     { return "scan" }
 func (InheritanceCheck) Description() string {
 	return "Table inheritance (non-partition) — not well supported in logical replication"
 }

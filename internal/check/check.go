@@ -4,8 +4,8 @@ package check
 import (
 	"context"
 
-	"github.com/pgEdge/mm-ready-go/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // Check is the interface that all compatibility checks must implement.

@@ -7,10 +7,10 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/connection"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // Options configures a monitor run.
@@ -123,8 +123,8 @@ func RunMonitor(ctx context.Context, conn *pgx.Conn, opts Options) (*models.Scan
 }
 
 var (
-	truncateCascadeRe  = regexp.MustCompile(`(?i)TRUNCATE.*CASCADE`)
-	concurrentIndexRe  = regexp.MustCompile(`(?i)CREATE\s+INDEX\s+CONCURRENTLY`)
+	truncateCascadeRe = regexp.MustCompile(`(?i)TRUNCATE.*CASCADE`)
+	concurrentIndexRe = regexp.MustCompile(`(?i)CREATE\s+INDEX\s+CONCURRENTLY`)
 )
 
 func buildPgstatResult(delta *StatsDelta) models.CheckResult {

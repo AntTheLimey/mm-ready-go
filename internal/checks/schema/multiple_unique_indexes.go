@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/pgEdge/mm-ready-go/internal/models"
-	"github.com/jackc/pgx/v5"
 )
 
 // MultipleUniqueIndexesCheck finds tables with more than one unique index.
@@ -19,8 +19,8 @@ func init() {
 }
 
 func (MultipleUniqueIndexesCheck) Name() string     { return "multiple_unique_indexes" }
-func (MultipleUniqueIndexesCheck) Category() string  { return "schema" }
-func (MultipleUniqueIndexesCheck) Mode() string      { return "scan" }
+func (MultipleUniqueIndexesCheck) Category() string { return "schema" }
+func (MultipleUniqueIndexesCheck) Mode() string     { return "scan" }
 func (MultipleUniqueIndexesCheck) Description() string {
 	return "Tables with multiple unique indexes — affects Spock conflict resolution"
 }
