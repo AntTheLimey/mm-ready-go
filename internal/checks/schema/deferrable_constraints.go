@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // DeferrableConstraintsCheck finds deferrable unique/PK constraints.
@@ -17,13 +17,21 @@ func init() {
 	check.Register(DeferrableConstraintsCheck{})
 }
 
-func (DeferrableConstraintsCheck) Name() string     { return "deferrable_constraints" }
-func (DeferrableConstraintsCheck) Category() string  { return "schema" }
-func (DeferrableConstraintsCheck) Mode() string      { return "scan" }
+// Name returns the unique identifier for this check.
+func (DeferrableConstraintsCheck) Name() string { return "deferrable_constraints" }
+
+// Category returns the check category.
+func (DeferrableConstraintsCheck) Category() string { return "schema" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (DeferrableConstraintsCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (DeferrableConstraintsCheck) Description() string {
 	return "Deferrable unique/PK constraints — silently skipped by Spock conflict resolution"
 }
 
+// Run executes the check against the database connection.
 func (c DeferrableConstraintsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

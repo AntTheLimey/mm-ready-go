@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // ConflictLogCheck reviews the Spock conflict log for recent conflicts.
@@ -16,13 +16,21 @@ func init() {
 	check.Register(&ConflictLogCheck{})
 }
 
-func (c *ConflictLogCheck) Name() string     { return "conflict_log" }
-func (c *ConflictLogCheck) Category() string  { return "replication" }
+// Name returns the unique identifier for this check.
+func (c *ConflictLogCheck) Name() string { return "conflict_log" }
+
+// Category returns the check category.
+func (c *ConflictLogCheck) Category() string { return "replication" }
+
+// Description returns a human-readable summary of this check.
 func (c *ConflictLogCheck) Description() string {
 	return "Review Spock conflict log for recent replication conflicts"
 }
+
+// Mode returns when this check runs (scan, audit, or both).
 func (c *ConflictLogCheck) Mode() string { return "audit" }
 
+// Run executes the check against the database connection.
 func (c *ConflictLogCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	// Check if spock.conflict_history table exists
 	var hasTable bool
@@ -141,10 +149,10 @@ func (c *ConflictLogCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Fi
 				cr.tableName, cr.count, cr.conflictType, cr.resolution, cr.lastConflict),
 			ObjectName: cr.tableName,
 			Metadata: map[string]any{
-				"conflict_type":  cr.conflictType,
-				"resolution":     cr.resolution,
-				"count":          cr.count,
-				"last_conflict":  cr.lastConflict,
+				"conflict_type": cr.conflictType,
+				"resolution":    cr.resolution,
+				"count":         cr.count,
+				"last_conflict": cr.lastConflict,
 			},
 		})
 	}

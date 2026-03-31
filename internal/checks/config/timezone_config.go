@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // TimezoneConfigCheck verifies that timezone settings are UTC for multi-master consistency.
@@ -17,11 +17,21 @@ func init() {
 	check.Register(TimezoneConfigCheck{})
 }
 
-func (TimezoneConfigCheck) Name() string        { return "timezone_config" }
-func (TimezoneConfigCheck) Category() string     { return "config" }
-func (TimezoneConfigCheck) Description() string  { return "Timezone settings — UTC recommended for consistent commit timestamps" }
-func (TimezoneConfigCheck) Mode() string         { return "scan" }
+// Name returns the unique identifier for this check.
+func (TimezoneConfigCheck) Name() string { return "timezone_config" }
 
+// Category returns the check category.
+func (TimezoneConfigCheck) Category() string { return "config" }
+
+// Description returns a human-readable summary of this check.
+func (TimezoneConfigCheck) Description() string {
+	return "Timezone settings — UTC recommended for consistent commit timestamps"
+}
+
+// Mode returns when this check runs (scan, audit, or both).
+func (TimezoneConfigCheck) Mode() string { return "scan" }
+
+// Run executes the check against the database connection.
 func (c TimezoneConfigCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var tz string
 	err := conn.QueryRow(ctx, "SHOW timezone;").Scan(&tz)

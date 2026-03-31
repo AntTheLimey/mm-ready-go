@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // MissingFKIndexesCheck finds FK columns on the referencing side that lack a matching index.
@@ -18,13 +18,21 @@ func init() {
 	check.Register(MissingFKIndexesCheck{})
 }
 
-func (MissingFKIndexesCheck) Name() string     { return "missing_fk_indexes" }
-func (MissingFKIndexesCheck) Category() string  { return "schema" }
-func (MissingFKIndexesCheck) Mode() string      { return "scan" }
+// Name returns the unique identifier for this check.
+func (MissingFKIndexesCheck) Name() string { return "missing_fk_indexes" }
+
+// Category returns the check category.
+func (MissingFKIndexesCheck) Category() string { return "schema" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (MissingFKIndexesCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (MissingFKIndexesCheck) Description() string {
 	return "Foreign key columns without indexes — slow cascades and lock contention"
 }
 
+// Run executes the check against the database connection.
 func (c MissingFKIndexesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT
@@ -35,6 +43,7 @@ func (c MissingFKIndexesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]model
 		FROM pg_catalog.pg_constraint co
 		JOIN pg_catalog.pg_class cc ON cc.oid = co.conrelid
 		JOIN pg_catalog.pg_namespace cn ON cn.oid = cc.relnamespace
+		// CROSS is the c r o s s value.
 		CROSS JOIN LATERAL unnest(co.conkey) WITH ORDINALITY AS x(attnum, ordinality)
 		JOIN pg_catalog.pg_attribute a
 		  ON a.attrelid = co.conrelid AND a.attnum = x.attnum

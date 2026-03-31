@@ -3,10 +3,12 @@ package replication
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // MaxWorkerProcessesCheck verifies sufficient worker processes for Spock.
@@ -16,13 +18,21 @@ func init() {
 	check.Register(&MaxWorkerProcessesCheck{})
 }
 
-func (c *MaxWorkerProcessesCheck) Name() string     { return "max_worker_processes" }
-func (c *MaxWorkerProcessesCheck) Category() string  { return "replication" }
+// Name returns the unique identifier for this check.
+func (c *MaxWorkerProcessesCheck) Name() string { return "max_worker_processes" }
+
+// Category returns the check category.
+func (c *MaxWorkerProcessesCheck) Category() string { return "replication" }
+
+// Description returns a human-readable summary of this check.
 func (c *MaxWorkerProcessesCheck) Description() string {
 	return "Sufficient worker processes for Spock background workers"
 }
+
+// Mode returns when this check runs (scan, audit, or both).
 func (c *MaxWorkerProcessesCheck) Mode() string { return "scan" }
 
+// Run executes the check against the database connection.
 func (c *MaxWorkerProcessesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var maxWorkersStr string
 	err := conn.QueryRow(ctx, "SHOW max_worker_processes;").Scan(&maxWorkersStr)
@@ -30,8 +40,10 @@ func (c *MaxWorkerProcessesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]mo
 		return nil, fmt.Errorf("querying max_worker_processes: %w", err)
 	}
 
-	var maxWorkers int
-	fmt.Sscanf(maxWorkersStr, "%d", &maxWorkers)
+	maxWorkers, err := strconv.Atoi(strings.TrimSpace(maxWorkersStr))
+	if err != nil {
+		return nil, fmt.Errorf("parsing max_worker_processes value %q: %w", maxWorkersStr, err)
+	}
 
 	if maxWorkers < 16 {
 		return []models.Finding{{

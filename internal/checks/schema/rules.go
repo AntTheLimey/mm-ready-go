@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // RulesCheck finds rules on tables that may cause unexpected behaviour with replication.
@@ -17,13 +17,21 @@ func init() {
 	check.Register(RulesCheck{})
 }
 
-func (RulesCheck) Name() string     { return "rules" }
-func (RulesCheck) Category() string  { return "schema" }
-func (RulesCheck) Mode() string      { return "scan" }
+// Name returns the unique identifier for this check.
+func (RulesCheck) Name() string { return "rules" }
+
+// Category returns the check category.
+func (RulesCheck) Category() string { return "schema" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (RulesCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (RulesCheck) Description() string {
 	return "Rules on tables — can cause unexpected behaviour with logical replication"
 }
 
+// Run executes the check against the database connection.
 func (c RulesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT
@@ -99,11 +107,11 @@ func (c RulesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, 
 		}
 
 		findings = append(findings, models.Finding{
-			Severity:  severity,
-			CheckName: c.Name(),
-			Category:  c.Category(),
-			Title:     fmt.Sprintf("%sRule '%s' on '%s' (%s)", insteadPrefix, ruleName, fqn, event),
-			Detail:    detail,
+			Severity:   severity,
+			CheckName:  c.Name(),
+			Category:   c.Category(),
+			Title:      fmt.Sprintf("%sRule '%s' on '%s' (%s)", insteadPrefix, ruleName, fqn, event),
+			Detail:     detail,
 			ObjectName: fmt.Sprintf("%s.%s", fqn, ruleName),
 			Remediation: "Consider converting rules to triggers (which can be controlled " +
 				"via session_replication_role), or disable rules on subscriber " +

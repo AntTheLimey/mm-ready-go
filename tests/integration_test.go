@@ -18,13 +18,12 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/AntTheLimey/mm-ready/internal/connection"
-	"github.com/AntTheLimey/mm-ready/internal/reporter"
-	"github.com/AntTheLimey/mm-ready/internal/scanner"
+	"github.com/pgEdge/mm-ready-go/internal/connection"
+	"github.com/pgEdge/mm-ready-go/internal/reporter"
+	"github.com/pgEdge/mm-ready-go/internal/scanner"
 
-	_ "github.com/AntTheLimey/mm-ready/internal/checks" // trigger all check registrations
+	_ "github.com/pgEdge/mm-ready-go/internal/checks" // trigger all check registrations
 )
-
 
 func TestFullScanCheckCount(t *testing.T) {
 	ctx := context.Background()
@@ -165,7 +164,7 @@ func TestJSONRendersFromScan(t *testing.T) {
 		t.Fatalf("scan failed: %v", err)
 	}
 
-	output, err := reporter.Render(report, "json")
+	output, err := reporter.Render(report, "json", reporter.DefaultReportOptions())
 	if err != nil {
 		t.Fatalf("render failed: %v", err)
 	}
@@ -193,7 +192,7 @@ func TestMarkdownRendersFromScan(t *testing.T) {
 		t.Fatalf("scan failed: %v", err)
 	}
 
-	output, err := reporter.Render(report, "markdown")
+	output, err := reporter.Render(report, "markdown", reporter.DefaultReportOptions())
 	if err != nil {
 		t.Fatalf("render failed: %v", err)
 	}
@@ -220,7 +219,7 @@ func TestHTMLRendersFromScan(t *testing.T) {
 		t.Fatalf("scan failed: %v", err)
 	}
 
-	output, err := reporter.Render(report, "html")
+	output, err := reporter.Render(report, "html", reporter.DefaultReportOptions())
 	if err != nil {
 		t.Fatalf("render failed: %v", err)
 	}

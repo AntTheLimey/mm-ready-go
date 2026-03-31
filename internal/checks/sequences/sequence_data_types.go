@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // SequenceDataTypesCheck flags smallint/integer sequences that may overflow faster in multi-master.
@@ -17,13 +17,21 @@ func init() {
 	check.Register(SequenceDataTypesCheck{})
 }
 
-func (SequenceDataTypesCheck) Name() string        { return "sequence_data_types" }
-func (SequenceDataTypesCheck) Category() string     { return "sequences" }
-func (SequenceDataTypesCheck) Mode() string         { return "scan" }
+// Name returns the unique identifier for this check.
+func (SequenceDataTypesCheck) Name() string { return "sequence_data_types" }
+
+// Category returns the check category.
+func (SequenceDataTypesCheck) Category() string { return "sequences" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (SequenceDataTypesCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (SequenceDataTypesCheck) Description() string {
 	return "Sequence data types — smallint/integer may overflow faster in multi-master"
 }
 
+// Run executes the check against the database connection.
 func (c SequenceDataTypesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const query = `
 		SELECT

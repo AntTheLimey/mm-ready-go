@@ -3,11 +3,13 @@ package cmd
 import (
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/check"
 	"github.com/spf13/cobra"
 )
 
 var listCategories string
+var listExclude string
+var listIncludeOnly string
 var listMode string
 
 var listChecksCmd = &cobra.Command{
@@ -18,6 +20,8 @@ var listChecksCmd = &cobra.Command{
 
 func init() {
 	listChecksCmd.Flags().StringVar(&listCategories, "categories", "", "Comma-separated list of categories to filter")
+	listChecksCmd.Flags().StringVar(&listExclude, "exclude", "", "Comma-separated list of check names to skip")
+	listChecksCmd.Flags().StringVar(&listIncludeOnly, "include-only", "", "Comma-separated list of check names to run (whitelist)")
 	listChecksCmd.Flags().StringVar(&listMode, "mode", "all", "Filter checks by mode (scan, audit, all)")
 }
 
@@ -32,7 +36,7 @@ func runListChecks(cmd *cobra.Command, args []string) {
 		mode = ""
 	}
 
-	checks := check.GetChecks(mode, cats)
+	checks := check.GetChecks(mode, cats, splitComma(listExclude), splitComma(listIncludeOnly))
 
 	if len(checks) == 0 {
 		fmt.Println("No checks found.")

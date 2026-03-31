@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // UpdateDeleteNoPkCheck finds tables without primary keys that have UPDATE/DELETE activity.
@@ -17,14 +17,22 @@ func init() {
 	check.Register(UpdateDeleteNoPkCheck{})
 }
 
-func (UpdateDeleteNoPkCheck) Name() string     { return "tables_update_delete_no_pk" }
-func (UpdateDeleteNoPkCheck) Category() string  { return "schema" }
-func (UpdateDeleteNoPkCheck) Mode() string      { return "scan" }
+// Name returns the unique identifier for this check.
+func (UpdateDeleteNoPkCheck) Name() string { return "tables_update_delete_no_pk" }
+
+// Category returns the check category.
+func (UpdateDeleteNoPkCheck) Category() string { return "schema" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (UpdateDeleteNoPkCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (UpdateDeleteNoPkCheck) Description() string {
 	return "Tables without primary keys that have UPDATE/DELETE activity — " +
 		"these operations are silently dropped by Spock"
 }
 
+// Run executes the check against the database connection.
 func (c UpdateDeleteNoPkCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

@@ -1,4 +1,5 @@
-// Audit all installed extensions for Spock compatibility.
+// Package extensions contains checks that audit installed PostgreSQL extensions
+// for compatibility with Spock 5 replication.
 package extensions
 
 import (
@@ -6,9 +7,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // InstalledExtensionsCheck audits installed extensions for known Spock compatibility issues.
@@ -45,13 +46,21 @@ var warnExtensions = map[string]bool{
 	"lo":          true,
 }
 
-func (InstalledExtensionsCheck) Name() string     { return "installed_extensions" }
-func (InstalledExtensionsCheck) Category() string  { return "extensions" }
-func (InstalledExtensionsCheck) Mode() string      { return "scan" }
+// Name returns the unique identifier for this check.
+func (InstalledExtensionsCheck) Name() string { return "installed_extensions" }
+
+// Category returns the check category.
+func (InstalledExtensionsCheck) Category() string { return "extensions" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (InstalledExtensionsCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (InstalledExtensionsCheck) Description() string {
 	return "Audit installed extensions for known Spock compatibility issues"
 }
 
+// Run executes the check against the database connection.
 func (c InstalledExtensionsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const query = `
 		SELECT extname, extversion, n.nspname AS schema_name

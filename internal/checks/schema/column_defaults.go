@@ -1,4 +1,5 @@
-// Check for volatile column defaults that may produce different values per node.
+// Package schema contains checks that examine database schema objects (tables,
+// columns, constraints, indexes) for Spock 5 replication compatibility.
 package schema
 
 import (
@@ -6,9 +7,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // ColumnDefaultsCheck finds volatile column defaults (now(), random(), etc.).
@@ -18,9 +19,16 @@ func init() {
 	check.Register(ColumnDefaultsCheck{})
 }
 
-func (ColumnDefaultsCheck) Name() string     { return "column_defaults" }
-func (ColumnDefaultsCheck) Category() string  { return "schema" }
-func (ColumnDefaultsCheck) Mode() string      { return "scan" }
+// Name returns the unique identifier for this check.
+func (ColumnDefaultsCheck) Name() string { return "column_defaults" }
+
+// Category returns the check category.
+func (ColumnDefaultsCheck) Category() string { return "schema" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (ColumnDefaultsCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (ColumnDefaultsCheck) Description() string {
 	return "Volatile column defaults (now(), random(), etc.) — may differ across nodes"
 }
@@ -33,6 +41,7 @@ var volatilePatterns = []string{
 	"pg_current_xact_id()",
 }
 
+// Run executes the check against the database connection.
 func (c ColumnDefaultsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

@@ -3,10 +3,12 @@ package replication
 import (
 	"context"
 	"fmt"
+	"strconv"
+	"strings"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // MaxReplicationSlotsCheck verifies sufficient replication slots for Spock.
@@ -16,13 +18,21 @@ func init() {
 	check.Register(&MaxReplicationSlotsCheck{})
 }
 
-func (c *MaxReplicationSlotsCheck) Name() string     { return "max_replication_slots" }
-func (c *MaxReplicationSlotsCheck) Category() string  { return "replication" }
+// Name returns the unique identifier for this check.
+func (c *MaxReplicationSlotsCheck) Name() string { return "max_replication_slots" }
+
+// Category returns the check category.
+func (c *MaxReplicationSlotsCheck) Category() string { return "replication" }
+
+// Description returns a human-readable summary of this check.
 func (c *MaxReplicationSlotsCheck) Description() string {
 	return "Sufficient replication slots for Spock node connections"
 }
+
+// Mode returns when this check runs (scan, audit, or both).
 func (c *MaxReplicationSlotsCheck) Mode() string { return "scan" }
 
+// Run executes the check against the database connection.
 func (c *MaxReplicationSlotsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var maxSlotsStr string
 	err := conn.QueryRow(ctx, "SHOW max_replication_slots;").Scan(&maxSlotsStr)
@@ -30,8 +40,10 @@ func (c *MaxReplicationSlotsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]m
 		return nil, fmt.Errorf("querying max_replication_slots: %w", err)
 	}
 
-	var maxSlots int
-	fmt.Sscanf(maxSlotsStr, "%d", &maxSlots)
+	maxSlots, err := strconv.Atoi(strings.TrimSpace(maxSlotsStr))
+	if err != nil {
+		return nil, fmt.Errorf("parsing max_replication_slots value %q: %w", maxSlotsStr, err)
+	}
 
 	var usedSlots int
 	err = conn.QueryRow(ctx, "SELECT count(*) FROM pg_catalog.pg_replication_slots;").Scan(&usedSlots)

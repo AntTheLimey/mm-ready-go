@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // TruncateCascadeCheck detects TRUNCATE CASCADE and RESTART IDENTITY in pg_stat_statements.
@@ -17,13 +17,21 @@ func init() {
 	check.Register(TruncateCascadeCheck{})
 }
 
-func (TruncateCascadeCheck) Name() string        { return "truncate_cascade" }
-func (TruncateCascadeCheck) Category() string     { return "sql_patterns" }
-func (TruncateCascadeCheck) Mode() string         { return "scan" }
+// Name returns the unique identifier for this check.
+func (TruncateCascadeCheck) Name() string { return "truncate_cascade" }
+
+// Category returns the check category.
+func (TruncateCascadeCheck) Category() string { return "sql_patterns" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (TruncateCascadeCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (TruncateCascadeCheck) Description() string {
 	return "TRUNCATE ... CASCADE and RESTART IDENTITY — replication behaviour caveats"
 }
 
+// Run executes the check against the database connection.
 func (c TruncateCascadeCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	// Check for TRUNCATE CASCADE.
 	cascadeRows, err := conn.Query(ctx, `

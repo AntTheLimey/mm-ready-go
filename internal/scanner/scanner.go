@@ -7,20 +7,30 @@ import (
 	"os"
 	"time"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/connection"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/connection"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // Options configures a scan run.
 type Options struct {
-	Host       string
-	Port       int
-	DBName     string
+	// Host is the database server hostname.
+	Host string
+	// Port is the database server port.
+	Port int
+	// DBName is the database name.
+	DBName string
+	// Categories filters checks by category.
 	Categories []string
-	Mode       string
-	Verbose    bool
+	// Exclude lists check names to skip.
+	Exclude []string
+	// IncludeOnly lists check names to run exclusively.
+	IncludeOnly []string
+	// Mode is the check mode (scan, audit, both).
+	Mode string
+	// Verbose enables detailed progress output.
+	Verbose bool
 }
 
 // RunScan executes all discovered checks against the database and returns a ScanReport.
@@ -50,7 +60,7 @@ func RunScan(ctx context.Context, conn *pgx.Conn, opts Options) (*models.ScanRep
 		ScanMode:    mode,
 	}
 
-	checks := check.GetChecks(mode, opts.Categories)
+	checks := check.GetChecks(mode, opts.Categories, opts.Exclude, opts.IncludeOnly)
 	total := len(checks)
 
 	if opts.Verbose {

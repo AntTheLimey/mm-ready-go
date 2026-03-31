@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // SubscriptionHealthCheck verifies health of Spock subscriptions.
@@ -16,13 +16,21 @@ func init() {
 	check.Register(&SubscriptionHealthCheck{})
 }
 
-func (c *SubscriptionHealthCheck) Name() string     { return "subscription_health" }
-func (c *SubscriptionHealthCheck) Category() string  { return "replication" }
+// Name returns the unique identifier for this check.
+func (c *SubscriptionHealthCheck) Name() string { return "subscription_health" }
+
+// Category returns the check category.
+func (c *SubscriptionHealthCheck) Category() string { return "replication" }
+
+// Description returns a human-readable summary of this check.
 func (c *SubscriptionHealthCheck) Description() string {
 	return "Check health of Spock subscriptions"
 }
+
+// Mode returns when this check runs (scan, audit, or both).
 func (c *SubscriptionHealthCheck) Mode() string { return "audit" }
 
+// Run executes the check against the database connection.
 func (c *SubscriptionHealthCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	// Check if spock schema exists
 	var hasSpock bool

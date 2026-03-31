@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // TempTablesCheck finds functions/procedures that CREATE TEMP TABLE.
@@ -17,13 +17,21 @@ func init() {
 	check.Register(TempTablesCheck{})
 }
 
-func (TempTablesCheck) Name() string     { return "temp_tables" }
-func (TempTablesCheck) Category() string  { return "schema" }
-func (TempTablesCheck) Mode() string      { return "scan" }
+// Name returns the unique identifier for this check.
+func (TempTablesCheck) Name() string { return "temp_tables" }
+
+// Category returns the check category.
+func (TempTablesCheck) Category() string { return "schema" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (TempTablesCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (TempTablesCheck) Description() string {
 	return "TEMPORARY tables — session-local, never replicated"
 }
 
+// Run executes the check against the database connection.
 func (c TempTablesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

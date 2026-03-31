@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // SpockGucsCheck verifies key Spock configuration parameters (GUCs).
@@ -17,10 +17,17 @@ func init() {
 	check.Register(SpockGucsCheck{})
 }
 
-func (SpockGucsCheck) Name() string        { return "spock_gucs" }
-func (SpockGucsCheck) Category() string     { return "config" }
-func (SpockGucsCheck) Description() string  { return "Verify key Spock configuration parameters (GUCs)" }
-func (SpockGucsCheck) Mode() string         { return "audit" }
+// Name returns the unique identifier for this check.
+func (SpockGucsCheck) Name() string { return "spock_gucs" }
+
+// Category returns the check category.
+func (SpockGucsCheck) Category() string { return "config" }
+
+// Description returns a human-readable summary of this check.
+func (SpockGucsCheck) Description() string { return "Verify key Spock configuration parameters (GUCs)" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (SpockGucsCheck) Mode() string { return "audit" }
 
 type gucSpec struct {
 	name        string
@@ -73,6 +80,7 @@ var spockGUCs = []gucSpec{
 	},
 }
 
+// Run executes the check against the database connection.
 func (c SpockGucsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var findings []models.Finding
 
@@ -97,11 +105,11 @@ func (c SpockGucsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Findi
 
 		if value != guc.recommended {
 			findings = append(findings, models.Finding{
-				Severity:  guc.severity,
-				CheckName: c.Name(),
-				Category:  c.Category(),
-				Title:     fmt.Sprintf("%s = '%s' (recommended: '%s')", guc.name, value, guc.recommended),
-				Detail:    fmt.Sprintf("%s\n\nCurrent value: '%s'.", guc.detail, value),
+				Severity:   guc.severity,
+				CheckName:  c.Name(),
+				Category:   c.Category(),
+				Title:      fmt.Sprintf("%s = '%s' (recommended: '%s')", guc.name, value, guc.recommended),
+				Detail:     fmt.Sprintf("%s\n\nCurrent value: '%s'.", guc.detail, value),
 				ObjectName: guc.name,
 				Remediation: fmt.Sprintf(
 					"Consider setting:\n  ALTER SYSTEM SET %s = '%s';",

@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // RepsetMembershipCheck verifies all user tables are in a Spock replication set.
@@ -16,13 +16,21 @@ func init() {
 	check.Register(&RepsetMembershipCheck{})
 }
 
-func (c *RepsetMembershipCheck) Name() string     { return "repset_membership" }
-func (c *RepsetMembershipCheck) Category() string  { return "replication" }
+// Name returns the unique identifier for this check.
+func (c *RepsetMembershipCheck) Name() string { return "repset_membership" }
+
+// Category returns the check category.
+func (c *RepsetMembershipCheck) Category() string { return "replication" }
+
+// Description returns a human-readable summary of this check.
 func (c *RepsetMembershipCheck) Description() string {
 	return "Verify all user tables are in a Spock replication set"
 }
+
+// Mode returns when this check runs (scan, audit, or both).
 func (c *RepsetMembershipCheck) Mode() string { return "audit" }
 
+// Run executes the check against the database connection.
 func (c *RepsetMembershipCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	// Check if spock schema exists
 	var hasSpock bool

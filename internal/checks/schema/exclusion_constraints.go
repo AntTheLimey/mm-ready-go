@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // ExclusionConstraintsCheck finds exclusion constraints that cannot be enforced across nodes.
@@ -17,13 +17,21 @@ func init() {
 	check.Register(ExclusionConstraintsCheck{})
 }
 
-func (ExclusionConstraintsCheck) Name() string     { return "exclusion_constraints" }
-func (ExclusionConstraintsCheck) Category() string  { return "schema" }
-func (ExclusionConstraintsCheck) Mode() string      { return "scan" }
+// Name returns the unique identifier for this check.
+func (ExclusionConstraintsCheck) Name() string { return "exclusion_constraints" }
+
+// Category returns the check category.
+func (ExclusionConstraintsCheck) Category() string { return "schema" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (ExclusionConstraintsCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (ExclusionConstraintsCheck) Description() string {
 	return "Exclusion constraints — not enforceable across Spock nodes"
 }
 
+// Run executes the check against the database connection.
 func (c ExclusionConstraintsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

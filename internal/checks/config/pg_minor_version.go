@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // PgMinorVersionCheck reports the PostgreSQL minor version so all cluster nodes can be compared.
@@ -17,11 +17,21 @@ func init() {
 	check.Register(PgMinorVersionCheck{})
 }
 
-func (PgMinorVersionCheck) Name() string        { return "pg_minor_version" }
-func (PgMinorVersionCheck) Category() string     { return "config" }
-func (PgMinorVersionCheck) Description() string  { return "PostgreSQL minor version — all cluster nodes should match" }
-func (PgMinorVersionCheck) Mode() string         { return "audit" }
+// Name returns the unique identifier for this check.
+func (PgMinorVersionCheck) Name() string { return "pg_minor_version" }
 
+// Category returns the check category.
+func (PgMinorVersionCheck) Category() string { return "config" }
+
+// Description returns a human-readable summary of this check.
+func (PgMinorVersionCheck) Description() string {
+	return "PostgreSQL minor version — all cluster nodes should match"
+}
+
+// Mode returns when this check runs (scan, audit, or both).
+func (PgMinorVersionCheck) Mode() string { return "audit" }
+
+// Run executes the check against the database connection.
 func (c PgMinorVersionCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var fullVersion, serverVersion string
 	err := conn.QueryRow(ctx, "SELECT version(), current_setting('server_version');").Scan(&fullVersion, &serverVersion)

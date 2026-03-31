@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // ConcurrentIndexesCheck detects CREATE INDEX CONCURRENTLY in pg_stat_statements.
@@ -18,13 +18,21 @@ func init() {
 	check.Register(ConcurrentIndexesCheck{})
 }
 
-func (ConcurrentIndexesCheck) Name() string        { return "concurrent_indexes" }
-func (ConcurrentIndexesCheck) Category() string     { return "sql_patterns" }
-func (ConcurrentIndexesCheck) Mode() string         { return "scan" }
+// Name returns the unique identifier for this check.
+func (ConcurrentIndexesCheck) Name() string { return "concurrent_indexes" }
+
+// Category returns the check category.
+func (ConcurrentIndexesCheck) Category() string { return "sql_patterns" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (ConcurrentIndexesCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (ConcurrentIndexesCheck) Description() string {
 	return "CREATE INDEX CONCURRENTLY — must be created manually on each node"
 }
 
+// Run executes the check against the database connection.
 func (c ConcurrentIndexesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const query = `
 		SELECT query, calls

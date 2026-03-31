@@ -1,4 +1,5 @@
-// Audit stored procedures for potential replication issues.
+// Package functions contains checks that audit stored procedures, triggers,
+// and views for potential Spock replication issues.
 package functions
 
 import (
@@ -6,9 +7,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // StoredProceduresCheck audits stored procedures/functions for write operations and DDL.
@@ -18,9 +19,16 @@ func init() {
 	check.Register(StoredProceduresCheck{})
 }
 
-func (StoredProceduresCheck) Name() string        { return "stored_procedures" }
-func (StoredProceduresCheck) Category() string     { return "functions" }
-func (StoredProceduresCheck) Mode() string         { return "scan" }
+// Name returns the unique identifier for this check.
+func (StoredProceduresCheck) Name() string { return "stored_procedures" }
+
+// Category returns the check category.
+func (StoredProceduresCheck) Category() string { return "functions" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (StoredProceduresCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (StoredProceduresCheck) Description() string {
 	return "Audit stored procedures/functions for write operations and DDL"
 }
@@ -44,6 +52,7 @@ var writePatterns = []string{
 	"EXECUTE ", "PERFORM ",
 }
 
+// Run executes the check against the database connection.
 func (c StoredProceduresCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const query = `
 		SELECT
@@ -108,13 +117,13 @@ func (c StoredProceduresCheck) Run(ctx context.Context, conn *pgx.Conn) ([]model
 			CheckName: c.Name(),
 			Category:  c.Category(),
 			Title: fmt.Sprintf("%s '%s' (%s, %s) contains write operations",
-				strings.Title(kindLabel), fqn, language, volLabel), //nolint:staticcheck
+				strings.Title(kindLabel), fqn, language, volLabel), //nolint:staticcheck // strings.Title is deprecated but adequate for single-word labels
 			Detail: fmt.Sprintf(
 				"%s '%s' written in %s (%s) contains potential write operations: %s. "+
 					"Write operations inside functions/procedures are replicated through "+
 					"the WAL (row-level changes), not by replaying the function call. "+
 					"However, side effects like DDL, NOTIFY, or external calls are not replicated.",
-				strings.Title(kindLabel), fqn, language, volLabel, //nolint:staticcheck
+				strings.Title(kindLabel), fqn, language, volLabel, //nolint:staticcheck // strings.Title is deprecated but adequate for single-word labels
 				strings.Join(foundWrites, ", "),
 			),
 			ObjectName: fqn,

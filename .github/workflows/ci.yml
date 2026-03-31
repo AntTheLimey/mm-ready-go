@@ -1,0 +1,143 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Go vet
+        run: go vet ./...
+
+      - name: Install golangci-lint
+        run: go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+
+      - name: golangci-lint
+        run: golangci-lint run
+
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Run unit tests
+        run: go test ./internal/... -v
+
+  integration:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mmready
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -h localhost"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Install PostgreSQL client
+        run: |
+          sudo apt-get install -y curl ca-certificates
+          sudo install -d /usr/share/postgresql-common/pgdg
+          sudo curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc
+          echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" | sudo tee /etc/apt/sources.list.d/pgdg.list
+          sudo apt-get update
+          sudo apt-get install -y postgresql-client-18
+
+      - name: Load test schema
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d mmready -f tests/test_schema_setup.sql
+
+      - name: Load test workload
+        run: |
+          PGPASSWORD=postgres psql -h localhost -U postgres -d mmready -f tests/test_workload.sql
+
+      - name: Run integration tests
+        env:
+          PGHOST: localhost
+          PGPORT: "5432"
+          PGDATABASE: mmready
+          PGUSER: postgres
+          PGPASSWORD: postgres
+        run: go test -tags integration ./tests/ -v
+
+      - name: Build binary
+        run: go build -o bin/mm-ready-go .
+
+      - name: Run scan and verify output
+        run: |
+          ./bin/mm-ready-go scan \
+            --host localhost --port 5432 \
+            --dbname mmready --user postgres --password postgres \
+            --format json --output scan-report.json -v
+          python3 -c "
+          import glob, json, sys
+          files = glob.glob('scan-report*.json')
+          if not files:
+              print('No scan report found'); sys.exit(1)
+          with open(files[0]) as f:
+              report = json.load(f)
+          s = report['summary']
+          print(f\"Checks run: {s['total_checks']}\")
+          assert s['total_checks'] == 49, f\"Expected 49 scan-mode checks, got {s['total_checks']}\"
+          print('Scan verification passed!')
+          "
+
+      - name: Test analyze mode
+        run: |
+          PGPASSWORD=postgres /usr/lib/postgresql/18/bin/pg_dump -h localhost -U postgres -d mmready --schema-only > schema.sql
+          ./bin/mm-ready-go analyze --file schema.sql --format json --output analyze-report.json -v
+          python3 -c "
+          import glob, json, sys
+          files = glob.glob('analyze-report*.json')
+          if not files:
+              print('No analyze report found'); sys.exit(1)
+          with open(files[0]) as f:
+              report = json.load(f)
+          s = report['summary']
+          print(f\"Analyze checks: {s['total_checks']}\")
+          assert s['total_checks'] == 19, f\"Expected 19 analyze checks, got {s['total_checks']}\"
+          print('Analyze verification passed!')
+          "
+
+      - name: Upload reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-reports
+          path: |
+            scan-report*.json
+            analyze-report*.json
+            schema.sql

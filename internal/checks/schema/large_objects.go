@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // LargeObjectsCheck finds large objects and OID columns.
@@ -17,13 +17,21 @@ func init() {
 	check.Register(LargeObjectsCheck{})
 }
 
-func (LargeObjectsCheck) Name() string     { return "large_objects" }
-func (LargeObjectsCheck) Category() string  { return "schema" }
-func (LargeObjectsCheck) Mode() string      { return "scan" }
+// Name returns the unique identifier for this check.
+func (LargeObjectsCheck) Name() string { return "large_objects" }
+
+// Category returns the check category.
+func (LargeObjectsCheck) Category() string { return "schema" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (LargeObjectsCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (LargeObjectsCheck) Description() string {
 	return "Large object (LOB) usage — logical decoding does not support them"
 }
 
+// Run executes the check against the database connection.
 func (c LargeObjectsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var findings []models.Finding
 

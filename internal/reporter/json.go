@@ -3,60 +3,91 @@ package reporter
 import (
 	"encoding/json"
 
-	"github.com/AntTheLimey/mm-ready/internal/models"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 type jsonReport struct {
-	Meta    jsonMeta     `json:"meta"`
-	Summary jsonSummary  `json:"summary"`
+	// Meta holds report metadata.
+	Meta jsonMeta `json:"meta"`
+	// Summary holds aggregated check counts.
+	Summary jsonSummary `json:"summary"`
+	// Results holds all check results.
 	Results []jsonResult `json:"results"`
 }
 
 type jsonMeta struct {
-	Tool        string `json:"tool"`
-	Version     string `json:"version"`
-	Timestamp   string `json:"timestamp"`
-	Database    string `json:"database"`
-	Host        string `json:"host"`
-	Port        int    `json:"port"`
-	PGVersion   string `json:"pg_version"`
+	// Tool is the tool name.
+	Tool string `json:"tool"`
+	// Version is the tool version.
+	Version string `json:"version"`
+	// Timestamp is when the scan was performed.
+	Timestamp string `json:"timestamp"`
+	// Database is the database name.
+	Database string `json:"database"`
+	// Host is the database server hostname.
+	Host string `json:"host"`
+	// Port is the database server port.
+	Port int `json:"port"`
+	// PGVersion is the PostgreSQL server version.
+	PGVersion string `json:"pg_version"`
+	// SpockTarget is the target Spock version.
 	SpockTarget string `json:"spock_target"`
 }
 
 type jsonSummary struct {
-	TotalChecks  int `json:"total_checks"`
+	// TotalChecks is the number of checks that ran.
+	TotalChecks int `json:"total_checks"`
+	// ChecksPassed is the number of checks with no findings.
 	ChecksPassed int `json:"checks_passed"`
-	Critical     int `json:"critical"`
-	Warnings     int `json:"warnings"`
-	Consider     int `json:"consider"`
-	Info         int `json:"info"`
+	// Critical is the count of critical findings.
+	Critical int `json:"critical"`
+	// Warnings is the count of warning findings.
+	Warnings int `json:"warnings"`
+	// Consider is the count of consider findings.
+	Consider int `json:"consider"`
+	// Info is the count of info findings.
+	Info int `json:"info"`
 }
 
 type jsonResult struct {
-	CheckName   string        `json:"check_name"`
-	Category    string        `json:"category"`
-	Description string        `json:"description"`
-	Passed      bool          `json:"passed"`
-	Skipped     bool          `json:"skipped"`
-	Error       *string       `json:"error"`
-	SkipReason  string        `json:"skip_reason,omitempty"`
-	Findings    []jsonFinding `json:"findings"`
+	// CheckName identifies which check produced this finding.
+	CheckName string `json:"check_name"`
+	// Category is the check category.
+	Category string `json:"category"`
+	// Description is a human-readable summary.
+	Description string `json:"description"`
+	// Passed indicates whether the check passed.
+	Passed bool `json:"passed"`
+	// Skipped indicates whether the check was skipped.
+	Skipped bool `json:"skipped"`
+	// Error holds the error message if the check failed.
+	Error *string `json:"error"`
+	// SkipReason explains why the check was skipped.
+	SkipReason string `json:"skip_reason,omitempty"`
+	// Findings holds all findings from this check.
+	Findings []jsonFinding `json:"findings"`
 }
 
 type jsonFinding struct {
-	Severity    string         `json:"severity"`
-	Title       string         `json:"title"`
-	Detail      string         `json:"detail"`
-	ObjectName  string         `json:"object_name"`
-	Remediation string         `json:"remediation"`
-	Metadata    map[string]any `json:"metadata"`
+	// Severity is the impact level of this finding.
+	Severity string `json:"severity"`
+	// Title is a short summary of the finding.
+	Title string `json:"title"`
+	// Detail is the full description of the finding.
+	Detail string `json:"detail"`
+	// ObjectName is the database object this finding relates to.
+	ObjectName string `json:"object_name"`
+	// Remediation describes how to fix this finding.
+	Remediation string `json:"remediation"`
+	// Metadata holds additional key-value data for this finding.
+	Metadata map[string]any `json:"metadata"`
 }
 
 // RenderJSON renders the report as a JSON string.
 func RenderJSON(report *models.ScanReport) string {
 	data := jsonReport{
 		Meta: jsonMeta{
-			Tool:        "mm-ready",
+			Tool:        "mm-ready-go",
 			Version:     "0.1.0",
 			Timestamp:   report.Timestamp.Format("2006-01-02T15:04:05-07:00"),
 			Database:    report.Database,

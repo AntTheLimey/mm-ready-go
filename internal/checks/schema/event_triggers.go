@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // EventTriggersCheck finds event triggers and evaluates their replication impact.
@@ -17,13 +17,21 @@ func init() {
 	check.Register(EventTriggersCheck{})
 }
 
-func (EventTriggersCheck) Name() string     { return "event_triggers" }
-func (EventTriggersCheck) Category() string  { return "schema" }
-func (EventTriggersCheck) Mode() string      { return "scan" }
+// Name returns the unique identifier for this check.
+func (EventTriggersCheck) Name() string { return "event_triggers" }
+
+// Category returns the check category.
+func (EventTriggersCheck) Category() string { return "schema" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (EventTriggersCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (EventTriggersCheck) Description() string {
 	return "Event triggers — fire on DDL events, may interact with Spock DDL replication"
 }
 
+// Run executes the check against the database connection.
 func (c EventTriggersCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

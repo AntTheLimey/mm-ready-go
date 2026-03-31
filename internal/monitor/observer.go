@@ -7,20 +7,30 @@ import (
 	"regexp"
 	"time"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/connection"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/connection"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // Options configures a monitor run.
 type Options struct {
-	Host     string
-	Port     int
-	DBName   string
+	// Host is the database server hostname.
+	Host string
+	// Port is the database server port.
+	Port int
+	// DBName is the database name.
+	DBName string
+	// Duration is the observation window in seconds.
 	Duration int
-	LogFile  string
-	Verbose  bool
+	// LogFile is the path to the PostgreSQL log file.
+	LogFile string
+	// Verbose enables detailed progress output.
+	Verbose bool
+	// Exclude lists check names to skip.
+	Exclude []string
+	// IncludeOnly lists check names to run exclusively.
+	IncludeOnly []string
 }
 
 // RunMonitor runs a full scan plus time-based observation.
@@ -41,7 +51,7 @@ func RunMonitor(ctx context.Context, conn *pgx.Conn, opts Options) (*models.Scan
 	}
 
 	// Phase 1: standard checks (scan-mode only)
-	checks := check.GetChecks("scan", nil)
+	checks := check.GetChecks("scan", nil, opts.Exclude, opts.IncludeOnly)
 	total := len(checks)
 	if opts.Verbose {
 		fmt.Fprintf(os.Stderr, "Phase 1: Running %d standard checks...\n", total)
@@ -123,8 +133,8 @@ func RunMonitor(ctx context.Context, conn *pgx.Conn, opts Options) (*models.Scan
 }
 
 var (
-	truncateCascadeRe  = regexp.MustCompile(`(?i)TRUNCATE.*CASCADE`)
-	concurrentIndexRe  = regexp.MustCompile(`(?i)CREATE\s+INDEX\s+CONCURRENTLY`)
+	truncateCascadeRe = regexp.MustCompile(`(?i)TRUNCATE.*CASCADE`)
+	concurrentIndexRe = regexp.MustCompile(`(?i)CREATE\s+INDEX\s+CONCURRENTLY`)
 )
 
 func buildPgstatResult(delta *StatsDelta) models.CheckResult {

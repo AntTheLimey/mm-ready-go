@@ -1,6 +1,6 @@
 .PHONY: build test test-integration lint clean build-all
 
-BINARY := mm-ready
+BINARY := mm-ready-go
 VERSION := 0.1.0
 
 build:

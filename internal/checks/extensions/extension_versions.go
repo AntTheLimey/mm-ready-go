@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // ExtensionVersionsCheck compares installed extension versions to available versions.
@@ -17,13 +17,21 @@ func init() {
 	check.Register(ExtensionVersionsCheck{})
 }
 
-func (ExtensionVersionsCheck) Name() string        { return "extension_versions" }
-func (ExtensionVersionsCheck) Category() string     { return "extensions" }
-func (ExtensionVersionsCheck) Mode() string         { return "scan" }
+// Name returns the unique identifier for this check.
+func (ExtensionVersionsCheck) Name() string { return "extension_versions" }
+
+// Category returns the check category.
+func (ExtensionVersionsCheck) Category() string { return "extensions" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (ExtensionVersionsCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (ExtensionVersionsCheck) Description() string {
 	return "Check installed extension versions against available upgrades"
 }
 
+// Run executes the check against the database connection.
 func (c ExtensionVersionsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const query = `
 		SELECT

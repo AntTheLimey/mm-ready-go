@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // StaleReplicationSlotsCheck detects inactive replication slots retaining WAL.
@@ -16,13 +16,21 @@ func init() {
 	check.Register(&StaleReplicationSlotsCheck{})
 }
 
-func (c *StaleReplicationSlotsCheck) Name() string     { return "stale_replication_slots" }
-func (c *StaleReplicationSlotsCheck) Category() string  { return "replication" }
+// Name returns the unique identifier for this check.
+func (c *StaleReplicationSlotsCheck) Name() string { return "stale_replication_slots" }
+
+// Category returns the check category.
+func (c *StaleReplicationSlotsCheck) Category() string { return "replication" }
+
+// Description returns a human-readable summary of this check.
 func (c *StaleReplicationSlotsCheck) Description() string {
 	return "Inactive replication slots — retaining WAL and risk filling disk"
 }
+
+// Mode returns when this check runs (scan, audit, or both).
 func (c *StaleReplicationSlotsCheck) Mode() string { return "audit" }
 
+// Run executes the check against the database connection.
 func (c *StaleReplicationSlotsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	query := `
 		SELECT
@@ -99,7 +107,7 @@ func (c *StaleReplicationSlotsCheck) Run(ctx context.Context, conn *pgx.Conn) ([
 			Metadata: map[string]any{
 				"slot_type":           slotType,
 				"wal_retained_mb":     fmt.Sprintf("%.1f", walMB),
-				"restart_lsn":        restartStr,
+				"restart_lsn":         restartStr,
 				"confirmed_flush_lsn": flushStr,
 			},
 		})

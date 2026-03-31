@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // MultipleDatabasesCheck flags when more than one user database exists.
@@ -17,13 +17,21 @@ func init() {
 	check.Register(&MultipleDatabasesCheck{})
 }
 
-func (c *MultipleDatabasesCheck) Name() string     { return "multiple_databases" }
-func (c *MultipleDatabasesCheck) Category() string  { return "replication" }
+// Name returns the unique identifier for this check.
+func (c *MultipleDatabasesCheck) Name() string { return "multiple_databases" }
+
+// Category returns the check category.
+func (c *MultipleDatabasesCheck) Category() string { return "replication" }
+
+// Description returns a human-readable summary of this check.
 func (c *MultipleDatabasesCheck) Description() string {
 	return "More than one user database in the instance — Spock supports one DB per instance"
 }
+
+// Mode returns when this check runs (scan, audit, or both).
 func (c *MultipleDatabasesCheck) Mode() string { return "scan" }
 
+// Run executes the check against the database connection.
 func (c *MultipleDatabasesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	query := `
 		SELECT datname

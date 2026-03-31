@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-mm-ready is a Go CLI tool that scans a PostgreSQL database and generates a
+mm-ready-go is a Go CLI tool that scans a PostgreSQL database and generates a
 compatibility report for converting it to multi-master replication using
 pgEdge Spock 5. It compiles to a single static binary and runs from any
 platform against any connectable PostgreSQL instance.
@@ -20,8 +20,8 @@ platform against any connectable PostgreSQL instance.
     installed and running.
   - `analyze` — offline analysis of a `pg_dump --schema-only` SQL file without
     a database connection. Useful for Customer Success when customers send
-    schema dumps. Runs 19 of the 56 checks (those that can work from schema
-    structure alone); the remaining 37 are marked as skipped.
+    schema dumps. Runs 19 of the 57 checks (those that can work from schema
+    structure alone); the remaining 38 are marked as skipped.
 
   Checks are tagged with `mode = "scan"`, `mode = "audit"`, or `mode = "both"`.
   Scan-mode checks must never assume Spock is installed. Audit-mode checks may
@@ -30,6 +30,18 @@ platform against any connectable PostgreSQL instance.
 - **Severity levels.** CRITICAL = must fix before Spock install.
   WARNING = should fix or review. CONSIDER = should investigate, may need
   action depending on context. INFO = pure awareness, no action required.
+
+- **CLI flags.** The scan, audit, and monitor commands share these flag groups:
+  - **Connection:** `--dsn`, `--host`, `--port`, `--dbname`, `--user`, `--password`
+  - **SSL/TLS:** `--sslmode`, `--sslcert`, `--sslkey`, `--sslrootcert`
+    (fall back to `PGSSLMODE`, `PGSSLCERT`, `PGSSLKEY`, `PGSSLROOTCERT`)
+  - **Config file:** `--config <path>` (explicit YAML config),
+    `--no-config` (skip config file discovery)
+  - **Check filtering:** `--exclude <names>` (skip specific checks),
+    `--include-only <names>` (whitelist mode, mutually exclusive with exclude)
+  - **Report:** `--no-todo` (omit To Do list from report),
+    `--todo-include-consider` (include CONSIDER items in To Do list)
+  - **Output:** `--format` (html, json, markdown), `--output` (file or directory path)
 
 ## Architecture
 
@@ -41,12 +53,14 @@ MM_Ready_Go/
     check/
       check.go                     # Check interface, Register(), AllRegistered()
       registry.go                  # GetChecks(mode, categories) with filtering/sorting
+    config/
+      config.go                    # YAML config loader
     checks/
       register.go                  # Blank imports of all 7 category packages
       schema/                      # 22 check files (one per check)
       replication/                 # 12 check files
       config/                      # 8 check files
-      extensions/                  # 4 check files
+      extensions/                  # 5 check files
       functions/                   # 3 check files
       sequences/                   # 2 check files
       sql_patterns/                # 5 check files
@@ -92,8 +106,8 @@ package schema
 
 import (
     "context"
-    "github.com/AntTheLimey/mm-ready/internal/check"
-    "github.com/AntTheLimey/mm-ready/internal/models"
+    "github.com/pgEdge/mm-ready-go/internal/check"
+    "github.com/pgEdge/mm-ready-go/internal/models"
     "github.com/jackc/pgx/v5"
 )
 
@@ -172,7 +186,7 @@ docker exec mmready-test psql -U postgres -d mmready -f /tmp/workload.sql
 go test -tags integration ./tests/ -v
 
 # Run scan
-./bin/mm-ready scan --host localhost --port 5499 --dbname mmready \
+./bin/mm-ready-go scan --host localhost --port 5499 --dbname mmready \
   --user postgres --password postgres --format html --output report.html
 ```
 
@@ -188,7 +202,7 @@ The `analyze` subcommand parses a pg_dump SQL file and runs schema-structural
 checks without a database connection:
 
 ```bash
-./bin/mm-ready analyze --file customer_schema.sql --format html -v
+./bin/mm-ready-go analyze --file customer_schema.sql --format html -v
 ```
 
 The schema parser (`internal/parser/parser.go`) extracts:

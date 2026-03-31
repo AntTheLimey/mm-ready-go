@@ -1,0 +1,24 @@
+run:
+  timeout: 5m
+
+linters:
+  enable:
+    - govet
+    - errcheck
+    - staticcheck
+    - gosimple
+    - ineffassign
+    - unused
+    - gocritic
+    - gofmt
+    - goimports
+
+linters-settings:
+  gocritic:
+    enabled-tags:
+      - diagnostic
+    disabled-checks:
+      - dupSubExpr
+      - weakCond
+      - ifElseChain
+      - sprintfQuotedString

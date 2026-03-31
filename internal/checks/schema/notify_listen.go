@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // NotifyListenCheck finds NOTIFY/pg_notify usage in functions and pg_stat_statements.
@@ -17,13 +17,21 @@ func init() {
 	check.Register(NotifyListenCheck{})
 }
 
-func (NotifyListenCheck) Name() string     { return "notify_listen" }
-func (NotifyListenCheck) Category() string  { return "schema" }
-func (NotifyListenCheck) Mode() string      { return "scan" }
+// Name returns the unique identifier for this check.
+func (NotifyListenCheck) Name() string { return "notify_listen" }
+
+// Category returns the check category.
+func (NotifyListenCheck) Category() string { return "schema" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (NotifyListenCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (NotifyListenCheck) Description() string {
 	return "LISTEN/NOTIFY usage — notifications are not replicated by Spock"
 }
 
+// Run executes the check against the database connection.
 func (c NotifyListenCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var findings []models.Finding
 

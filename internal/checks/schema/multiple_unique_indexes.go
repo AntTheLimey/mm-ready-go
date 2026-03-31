@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // MultipleUniqueIndexesCheck finds tables with more than one unique index.
@@ -18,13 +18,21 @@ func init() {
 	check.Register(MultipleUniqueIndexesCheck{})
 }
 
-func (MultipleUniqueIndexesCheck) Name() string     { return "multiple_unique_indexes" }
-func (MultipleUniqueIndexesCheck) Category() string  { return "schema" }
-func (MultipleUniqueIndexesCheck) Mode() string      { return "scan" }
+// Name returns the unique identifier for this check.
+func (MultipleUniqueIndexesCheck) Name() string { return "multiple_unique_indexes" }
+
+// Category returns the check category.
+func (MultipleUniqueIndexesCheck) Category() string { return "schema" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (MultipleUniqueIndexesCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (MultipleUniqueIndexesCheck) Description() string {
 	return "Tables with multiple unique indexes — affects Spock conflict resolution"
 }
 
+// Run executes the check against the database connection.
 func (c MultipleUniqueIndexesCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

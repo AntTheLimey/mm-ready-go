@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // WalLevelCheck verifies that wal_level is set to 'logical'.
@@ -17,11 +17,21 @@ func init() {
 	check.Register(&WalLevelCheck{})
 }
 
-func (c *WalLevelCheck) Name() string        { return "wal_level" }
-func (c *WalLevelCheck) Category() string     { return "replication" }
-func (c *WalLevelCheck) Description() string  { return "wal_level must be 'logical' for Spock replication" }
-func (c *WalLevelCheck) Mode() string         { return "scan" }
+// Name returns the unique identifier for this check.
+func (c *WalLevelCheck) Name() string { return "wal_level" }
 
+// Category returns the check category.
+func (c *WalLevelCheck) Category() string { return "replication" }
+
+// Description returns a human-readable summary of this check.
+func (c *WalLevelCheck) Description() string {
+	return "wal_level must be 'logical' for Spock replication"
+}
+
+// Mode returns when this check runs (scan, audit, or both).
+func (c *WalLevelCheck) Mode() string { return "scan" }
+
+// Run executes the check against the database connection.
 func (c *WalLevelCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	var walLevel string
 	err := conn.QueryRow(ctx, "SHOW wal_level;").Scan(&walLevel)

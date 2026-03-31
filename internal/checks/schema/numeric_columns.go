@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // NumericColumnsCheck finds numeric columns whose names suggest accumulator/counter patterns.
@@ -18,9 +18,16 @@ func init() {
 	check.Register(NumericColumnsCheck{})
 }
 
-func (NumericColumnsCheck) Name() string     { return "numeric_columns" }
-func (NumericColumnsCheck) Category() string  { return "schema" }
-func (NumericColumnsCheck) Mode() string      { return "scan" }
+// Name returns the unique identifier for this check.
+func (NumericColumnsCheck) Name() string { return "numeric_columns" }
+
+// Category returns the check category.
+func (NumericColumnsCheck) Category() string { return "schema" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (NumericColumnsCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (NumericColumnsCheck) Description() string {
 	return "Numeric columns that may be Delta-Apply candidates (counters, balances, etc.)"
 }
@@ -32,6 +39,7 @@ var suspectPatterns = []string{
 	"cumulative", "aggregate", "accrued", "inventory",
 }
 
+// Run executes the check against the database connection.
 func (c NumericColumnsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

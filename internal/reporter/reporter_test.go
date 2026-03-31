@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/AntTheLimey/mm-ready/internal/models"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // -- Test helpers -------------------------------------------------------------
@@ -162,7 +162,9 @@ func TestJSONValidJSON(t *testing.T) {
 
 func TestJSONHasRequiredKeys(t *testing.T) {
 	var data map[string]any
-	json.Unmarshal([]byte(RenderJSON(sampleReport())), &data)
+	if err := json.Unmarshal([]byte(RenderJSON(sampleReport())), &data); err != nil {
+		t.Fatal(err)
+	}
 	for _, key := range []string{"meta", "summary", "results"} {
 		if _, ok := data[key]; !ok {
 			t.Errorf("missing key %q", key)
@@ -172,7 +174,9 @@ func TestJSONHasRequiredKeys(t *testing.T) {
 
 func TestJSONSummaryCounts(t *testing.T) {
 	var data map[string]any
-	json.Unmarshal([]byte(RenderJSON(sampleReport())), &data)
+	if err := json.Unmarshal([]byte(RenderJSON(sampleReport())), &data); err != nil {
+		t.Fatal(err)
+	}
 	s := data["summary"].(map[string]any)
 	checks := map[string]float64{
 		"critical":     1,
@@ -191,7 +195,9 @@ func TestJSONSummaryCounts(t *testing.T) {
 
 func TestJSONResultsCount(t *testing.T) {
 	var data map[string]any
-	json.Unmarshal([]byte(RenderJSON(sampleReport())), &data)
+	if err := json.Unmarshal([]byte(RenderJSON(sampleReport())), &data); err != nil {
+		t.Fatal(err)
+	}
 	results := data["results"].([]any)
 	if len(results) != 7 {
 		t.Errorf("results count = %d, want 7", len(results))
@@ -200,7 +206,9 @@ func TestJSONResultsCount(t *testing.T) {
 
 func TestJSONFindingFields(t *testing.T) {
 	var data map[string]any
-	json.Unmarshal([]byte(RenderJSON(sampleReport())), &data)
+	if err := json.Unmarshal([]byte(RenderJSON(sampleReport())), &data); err != nil {
+		t.Fatal(err)
+	}
 	results := data["results"].([]any)
 	wal := results[0].(map[string]any)
 	if wal["check_name"] != "wal_level" {
@@ -218,7 +226,9 @@ func TestJSONFindingFields(t *testing.T) {
 
 func TestJSONErrorReported(t *testing.T) {
 	var data map[string]any
-	json.Unmarshal([]byte(RenderJSON(sampleReport())), &data)
+	if err := json.Unmarshal([]byte(RenderJSON(sampleReport())), &data); err != nil {
+		t.Fatal(err)
+	}
 	results := data["results"].([]any)
 	for _, r := range results {
 		m := r.(map[string]any)
@@ -238,7 +248,9 @@ func TestJSONErrorReported(t *testing.T) {
 
 func TestJSONMetaFields(t *testing.T) {
 	var data map[string]any
-	json.Unmarshal([]byte(RenderJSON(sampleReport())), &data)
+	if err := json.Unmarshal([]byte(RenderJSON(sampleReport())), &data); err != nil {
+		t.Fatal(err)
+	}
 	meta := data["meta"].(map[string]any)
 	if meta["database"] != "testdb" {
 		t.Errorf("database = %v", meta["database"])
@@ -284,7 +296,7 @@ func TestMarkdownContainsFindingTitles(t *testing.T) {
 // -- HTML Reporter ------------------------------------------------------------
 
 func TestHTMLValidStructure(t *testing.T) {
-	output := RenderHTML(sampleReport())
+	output := RenderHTML(sampleReport(), DefaultReportOptions())
 	lower := strings.ToLower(output)
 	if !strings.Contains(lower, "<!doctype html>") {
 		t.Error("HTML should contain DOCTYPE")
@@ -295,7 +307,7 @@ func TestHTMLValidStructure(t *testing.T) {
 }
 
 func TestHTMLContainsSeverityBadges(t *testing.T) {
-	output := RenderHTML(sampleReport())
+	output := RenderHTML(sampleReport(), DefaultReportOptions())
 	for _, badge := range []string{"badge-critical", "badge-warning", "badge-consider", "badge-info"} {
 		if !strings.Contains(output, badge) {
 			t.Errorf("HTML should contain %s", badge)
@@ -304,7 +316,7 @@ func TestHTMLContainsSeverityBadges(t *testing.T) {
 }
 
 func TestHTMLContainsFindingContent(t *testing.T) {
-	output := RenderHTML(sampleReport())
+	output := RenderHTML(sampleReport(), DefaultReportOptions())
 	// Go's html.EscapeString turns ' into &#39;
 	if !strings.Contains(output, "wal_level is not &#39;logical&#39;") && !strings.Contains(output, "wal_level is not 'logical'") {
 		t.Error("HTML should contain wal_level finding title")
@@ -312,7 +324,7 @@ func TestHTMLContainsFindingContent(t *testing.T) {
 }
 
 func TestHTMLTodoSectionPresent(t *testing.T) {
-	output := RenderHTML(sampleReport())
+	output := RenderHTML(sampleReport(), DefaultReportOptions())
 	if !strings.Contains(output, "To Do") {
 		t.Error("HTML should contain To Do section")
 	}
@@ -322,7 +334,7 @@ func TestHTMLTodoSectionPresent(t *testing.T) {
 }
 
 func TestHTMLSidebarPresent(t *testing.T) {
-	output := RenderHTML(sampleReport())
+	output := RenderHTML(sampleReport(), DefaultReportOptions())
 	if !strings.Contains(output, "sidebar") {
 		t.Error("HTML should contain sidebar")
 	}
@@ -387,7 +399,7 @@ func TestVerdictReadyWithOnlyConsiderAndInfo(t *testing.T) {
 
 func TestVerdictInHTMLToo(t *testing.T) {
 	r := makeReportWithSeverities(models.SeverityCritical, models.SeverityWarning)
-	h := RenderHTML(r)
+	h := RenderHTML(r, DefaultReportOptions())
 	if !strings.Contains(h, "NOT READY") {
 		t.Error("HTML should contain NOT READY")
 	}
@@ -396,7 +408,9 @@ func TestVerdictInHTMLToo(t *testing.T) {
 func TestVerdictNotInJSON(t *testing.T) {
 	r := makeReportWithSeverities(models.SeverityCritical)
 	var data map[string]any
-	json.Unmarshal([]byte(RenderJSON(r)), &data)
+	if err := json.Unmarshal([]byte(RenderJSON(r)), &data); err != nil {
+		t.Fatal(err)
+	}
 	summary := data["summary"].(map[string]any)
 	if _, ok := summary["verdict"]; ok {
 		t.Error("JSON summary should not contain verdict field")

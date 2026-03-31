@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // HbaConfigCheck verifies pg_hba.conf has replication connection entries.
@@ -16,13 +16,21 @@ func init() {
 	check.Register(&HbaConfigCheck{})
 }
 
-func (c *HbaConfigCheck) Name() string        { return "hba_config" }
-func (c *HbaConfigCheck) Category() string     { return "replication" }
+// Name returns the unique identifier for this check.
+func (c *HbaConfigCheck) Name() string { return "hba_config" }
+
+// Category returns the check category.
+func (c *HbaConfigCheck) Category() string { return "replication" }
+
+// Description returns a human-readable summary of this check.
 func (c *HbaConfigCheck) Description() string {
 	return "pg_hba.conf must allow replication connections between nodes"
 }
+
+// Mode returns when this check runs (scan, audit, or both).
 func (c *HbaConfigCheck) Mode() string { return "scan" }
 
+// Run executes the check against the database connection.
 func (c *HbaConfigCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	query := `
 		SELECT

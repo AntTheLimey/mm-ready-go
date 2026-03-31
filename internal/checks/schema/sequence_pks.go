@@ -5,9 +5,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // SequencePKsCheck finds PK columns backed by standard sequences that need snowflake migration.
@@ -17,13 +17,21 @@ func init() {
 	check.Register(SequencePKsCheck{})
 }
 
-func (SequencePKsCheck) Name() string     { return "sequence_pks" }
-func (SequencePKsCheck) Category() string  { return "schema" }
-func (SequencePKsCheck) Mode() string      { return "scan" }
+// Name returns the unique identifier for this check.
+func (SequencePKsCheck) Name() string { return "sequence_pks" }
+
+// Category returns the check category.
+func (SequencePKsCheck) Category() string { return "schema" }
+
+// Mode returns when this check runs (scan, audit, or both).
+func (SequencePKsCheck) Mode() string { return "scan" }
+
+// Description returns a human-readable summary of this check.
 func (SequencePKsCheck) Description() string {
 	return "Primary keys using standard sequences — must migrate to pgEdge snowflake"
 }
 
+// Run executes the check against the database connection.
 func (c SequencePKsCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	const sqlQuery = `
 		SELECT

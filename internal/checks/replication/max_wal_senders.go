@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/AntTheLimey/mm-ready/internal/check"
-	"github.com/AntTheLimey/mm-ready/internal/models"
 	"github.com/jackc/pgx/v5"
+	"github.com/pgEdge/mm-ready-go/internal/check"
+	"github.com/pgEdge/mm-ready-go/internal/models"
 )
 
 // MaxWalSendersCheck verifies sufficient WAL senders for Spock replication.
@@ -16,13 +16,21 @@ func init() {
 	check.Register(&MaxWalSendersCheck{})
 }
 
-func (c *MaxWalSendersCheck) Name() string     { return "max_wal_senders" }
-func (c *MaxWalSendersCheck) Category() string  { return "replication" }
+// Name returns the unique identifier for this check.
+func (c *MaxWalSendersCheck) Name() string { return "max_wal_senders" }
+
+// Category returns the check category.
+func (c *MaxWalSendersCheck) Category() string { return "replication" }
+
+// Description returns a human-readable summary of this check.
 func (c *MaxWalSendersCheck) Description() string {
 	return "Sufficient max_wal_senders for Spock logical replication"
 }
+
+// Mode returns when this check runs (scan, audit, or both).
 func (c *MaxWalSendersCheck) Mode() string { return "scan" }
 
+// Run executes the check against the database connection.
 func (c *MaxWalSendersCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, error) {
 	query := `
 		SELECT
