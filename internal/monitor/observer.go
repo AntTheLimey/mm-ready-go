@@ -27,6 +27,10 @@ type Options struct {
 	LogFile string
 	// Verbose enables detailed progress output.
 	Verbose bool
+	// Exclude lists check names to skip.
+	Exclude []string
+	// IncludeOnly lists check names to run exclusively.
+	IncludeOnly []string
 }
 
 // RunMonitor runs a full scan plus time-based observation.
@@ -47,7 +51,7 @@ func RunMonitor(ctx context.Context, conn *pgx.Conn, opts Options) (*models.Scan
 	}
 
 	// Phase 1: standard checks (scan-mode only)
-	checks := check.GetChecks("scan", nil, nil, nil)
+	checks := check.GetChecks("scan", nil, opts.Exclude, opts.IncludeOnly)
 	total := len(checks)
 	if opts.Verbose {
 		fmt.Fprintf(os.Stderr, "Phase 1: Running %d standard checks...\n", total)

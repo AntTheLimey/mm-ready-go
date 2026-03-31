@@ -176,7 +176,7 @@ func (y yamlConfig) toConfig() Config {
 	cfg := Default()
 
 	cfg.Checks.Exclude = y.Checks.Exclude
-	if len(y.Checks.IncludeOnly) > 0 {
+	if y.Checks.IncludeOnly != nil {
 		cfg.Checks.IncludeOnly = y.Checks.IncludeOnly
 	}
 
@@ -193,7 +193,7 @@ func (y yamlConfig) toConfig() Config {
 	} {
 		if mc != nil {
 			cc := CheckConfig{Exclude: mc.Checks.Exclude}
-			if len(mc.Checks.IncludeOnly) > 0 {
+			if mc.Checks.IncludeOnly != nil {
 				cc.IncludeOnly = mc.Checks.IncludeOnly
 			}
 			cfg.ModeChecks[mode] = cc

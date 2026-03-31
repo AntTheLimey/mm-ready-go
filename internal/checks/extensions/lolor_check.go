@@ -4,6 +4,7 @@ package extensions
 import (
 	"context"
 	"fmt"
+	"strconv"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/pgEdge/mm-ready-go/internal/check"
@@ -110,6 +111,23 @@ func (c LolorCheck) Run(ctx context.Context, conn *pgx.Conn) ([]models.Finding, 
 				"  ALTER SYSTEM SET lolor.node = <unique_id>;\n" +
 				"  -- Restart PostgreSQL\n" +
 				"The value must be unique across all nodes (1 to 2^28).",
+		}}, nil
+	}
+
+	// Validate node value is a positive integer in the supported range (1 to 2^28)
+	const maxNode = 1 << 28 // 268435456
+	nodeID, parseErr := strconv.ParseInt(*nodeVal, 10, 64)
+	if parseErr != nil || nodeID < 1 || nodeID > int64(maxNode) {
+		return []models.Finding{{
+			Severity:   models.SeverityWarning,
+			CheckName:  c.Name(),
+			Category:   c.Category(),
+			Title:      fmt.Sprintf("LOLOR lolor.node has invalid value: %s", *nodeVal),
+			Detail:     fmt.Sprintf("lolor.node is set to %q which is not a valid node identifier. The value must be an integer between 1 and %d.", *nodeVal, maxNode),
+			ObjectName: "lolor.node",
+			Remediation: fmt.Sprintf("Set a valid node identifier (1 to %d):\n"+
+				"  ALTER SYSTEM SET lolor.node = <unique_id>;\n"+
+				"  -- Restart PostgreSQL", maxNode),
 		}}, nil
 	}
 
